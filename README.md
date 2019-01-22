@@ -1,7 +1,6 @@
 # COMP0022
 Coursework for COMP0022
 
-
 Test change
 
 Branch change
@@ -28,6 +27,5 @@ git push --set-upstream origin YOURNAME
 git push
 git checkout master
 git merge YOURNAME
-
-
-
+git push
+git checkout YOURNAME
