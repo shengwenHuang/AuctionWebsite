@@ -16,7 +16,7 @@ git clone PASTE YOUR URL HERE, WHICH YOU GOT FROM GITHUB
 then make a change to the readme file
 
 then type:
-git checkout -b YOURNAME
+git checkout YOURNAME
 
 replace yourname above with your name....
 
@@ -27,8 +27,7 @@ git pull origin master
 git push --set-upstream origin YOURNAME
 git push
 git checkout master
-git push origin master
-git checkout YOURNAME
+git merge YOURNAME
 
 
 
