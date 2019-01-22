@@ -16,7 +16,7 @@ git clone PASTE YOUR URL HERE, WHICH YOU GOT FROM GITHUB
 then make a change to the readme file
 
 then type:
-git checkout YOURNAME
+git checkout -b YOURNAME
 
 replace yourname above with your name....
 
