@@ -23,11 +23,19 @@ replace yourname above with your name....
 
 then type:
 git add README.md
+
 git commit -m "adding branch"
+
 git pull origin master
+
 git push --set-upstream origin YOURNAME
+
 git push
+
 git checkout master
+
 git merge YOURNAME
+
 git push
+
 git checkout YOURNAME
