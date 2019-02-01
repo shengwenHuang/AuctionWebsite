@@ -69,24 +69,6 @@ if (isset($_GET["submit"])) {
     // process the form contents...
 }
 ?>
-  
-
-        <?php
-            // $mysqli = new mysqli("localhost", "mysqlread", "Welcome1998", "nxj");
-            // if ($mysqli->connect_errno) {
-            //     printf("Connect failed: %s\n", $mysqli->connect_error);
-            //     exit();
-            // }
-           
-
-            // $result = $mysqli->query("SELECT tb_merchant.name, tb_merchant.website, tb_merchant_location.location, tb_merchant_location.phone_number, tb_merchant_location.rating from tb_merchant, tb_merchant_location where tb_merchant.pk_merchant_id = fk_merchant_id");
-
-            
-            // $result->close();
-            // $avVal->close();
-            // $mysqli->close();
-        
-        ?>
             
     </body>
 </html>
