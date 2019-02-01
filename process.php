@@ -1,6 +1,15 @@
 <?php
   include 'database.php';
 
+  function check_empty($error_message, ...$inputs) {
+    foreach ($inputs as $field) {
+      if (!isset($field) || $field == '') {
+        return $error_message;
+      }
+    }
+    return '';
+  }
+
   if (isset($_POST['submit-login'])) {
     // Check that the passed variables do not contain malicious code
     $username = mysqli_real_escape_string($connection, $_POST['username']);
