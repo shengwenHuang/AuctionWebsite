@@ -1,4 +1,5 @@
-<?php include 'database.php'; ?>
+<?php include "database.php" ?>
+
 <!doctype html>
 <html>
   <head>
@@ -12,10 +13,10 @@
         <h1>Welcome to EbayLite!</h1>
       </header>
       <div id="input">
-        <form method="post" action="process.php">
+        <form method="post" action=process.php>
           <input type="text" id="username" name="username" placeholder="Enter Your Username"/><br/>
           <input type="password" id="password" name="password" placeholder="Enter Your Password"/><br/>
-          <input id="login-btn" type="submit" name="submit" value="Login"/><br/>
+          <input id="login-btn" type="submit" name="submit-login" value="Login"/><br/>
         </form>
         <?php if (isset($_GET['error'])) : ?>
           <div class="error"><?php echo $_GET['error']; ?></div>
@@ -23,7 +24,7 @@
       </div>
       <div id="register-button">
         <form method="post" action="registration.php">
-          <input id="register-btn" type="submit" name="submit" value="Register"/>
+          <input id="register-btn" type="submit" name="" value="Register"/>
         </form>
       </div>
     </div>
