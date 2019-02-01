@@ -1,7 +1,7 @@
 <?php
   include 'database.php';
 
-  if (isset($_POST['submit'])) {
+  if (isset($_POST['submit-login'])) {
     // Check that the passed variables do not contain malicious code
     $username = mysqli_real_escape_string($connection, $_POST['username']);
     $password = mysqli_real_escape_string($connection, $_POST['password']);
