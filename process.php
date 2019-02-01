@@ -2,27 +2,44 @@
   include 'database.php';
 
   if (isset($_POST['submit'])) {
-    $user = mysqli_real_escape_string($connection, $_POST['user']);
-    $message = mysqli_real_escape_string($connection, $_POST['message']);
+    // Check that the passed variables do not contain malicious code
+    $username = mysqli_real_escape_string($connection, $_POST['username']);
+    $password = mysqli_real_escape_string($connection, $_POST['password']);
 
-    date_default_timezone_set('Europe/London');
-    $time = date('h:i:s a', time());
-
-    if (!isset($user) || $user == '' || !isset($message) || $message == '') {
-      $error = "Please fill in your name and a message" . "User: " . $user . " Message: " . $message;
+    if (!isset($username) || $username == '' || !isset($password) || $password == '') {
+      $error = "Please provide a username and password to login";
       header("Location: index.php?error=" . urlencode($error));
       exit();
     }
     else {
-      $query = "INSERT INTO messages (user, message, time) 
-                VALUES ('$user', '$message', '$time')";
-      if (!mysqli_query($connection, $query)) {
+      $query = "SELECT * FROM users WHERE username='$username'";
+      $result = mysqli_query($connection, $query);
+      if (!$result) {
         die('Error: ' . mysqli_error($connection));
       }
       else {
-        header('Location: index.php');
-        exit();
+        if (mysqli_num_rows($result) > 0) {
+          $userdata = mysqli_fetch_assoc($result);
+          if ($userdata["password"] == $password) {
+            // Test code
+            $error = "Success!";
+            header("Location: index.php?error=" . urlencode($error));
+            exit();
+          } else {
+            $error = "Incorrect password provided";
+            header("Location: index.php?error=" . urlencode($error));
+            exit();
+          }
+        } else {
+          $error = "Could not find the provided username";
+          header("Location: index.php?error=" . urlencode($error));
+          exit();
+        }
       }
     }
+  } else {
+    $error = "Something went wrong processing the data";
+    header("Location: index.php?error=" . urlencode($error));
+    exit();
   }
 ?>
