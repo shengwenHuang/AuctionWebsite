@@ -2,7 +2,7 @@
 $dbname = 'ebaylite';
 $dbhost = 'localhost';
 $dbusername = 'root';
-$dbpassword = '';
+$dbpassword = 'root';
 
 $connection = mysqli_connect($dbhost, $dbusername, $dbpassword, $dbname);
 
