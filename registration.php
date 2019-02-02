@@ -1,74 +1,34 @@
+<!doctype html>
 <html>
-    <head>
-        <!-- <link rel="stylesheet" type="text/css" href="/nxjwolf/styles.css" /> -->
-    </head>
-    <body>
 
-    <?php
-// define variables and initialize with empty values
-$nameErr = $emailErr = $usernameErr = $passwordErr = "";
-$name = $email = $username = $password = "";
+<head>
+    <meta charset="utf-8" />
+    <title>EbayLite Registration</title>
+    <!-- <link rel="stylesheet" href="css/style.css" type="text/css"> -->
+</head>
 
+<body>
+    <div id="body-content">
+        <header>
+            <h1>New User Registration</h1>
+        </header>
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["name"])) {
-        $nameErr = "Missing";
-    }
-    else {
-        $name = $_POST["name"];
-    }
+        <div id="user-input">
+            <form method="post" action="process.php">
+                <input type="text" name="name" placeholder="Enter your name"> <br />
+                <input type="text" name="email" placeholder="Enter your email"> <br />
+                <input type="text" name="username" placeholder="Enter your username"> <br />
+                <input type="text" name="password" placeholder="Enter your password"> <br />
 
-    if (empty($_POST["email"])) {
-        $emailErr = "Email address missing";
-    }
-    else {
-        $name = $_POST["email"];
-    }
+                <input id="finish-registration" type="submit" name="submit-register" value="Submit" />
+            </form>
+            <?php if (isset($_GET['error'])) : ?>
+            <div class="error">
+                <?php echo $_GET['error']; ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</body>
 
-    if (empty($_POST["username"])) {
-        $usernameErr = "Username address missing";
-    }
-    else {
-        $name = $_POST["username"];
-    }
-
-    if (empty($_POST["password"])) {
-        $passwordErr = "Password address missing";
-    }
-    else {
-        $name = $_POST["password"];
-    }
-
-}
-?>
-
-<form method="POST"
- action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-
-    Name: <input type="text" name="name" value="<?php echo $name;?>">
-    
-    <?php echo $nameErr;?>
-    <br />
-
-    E-mail: <input type="text" name="email" value="<?php echo $email;?>">
-    <?php echo $emailErr;?>
-    <br />
-
-    Username: <input type="text" name="username" value="<?php echo $username;?>">
-    <?php echo $usernameErr;?>
-    <br />
-    
-    Password: <input type="text" name="password" value="<?php echo $password;?>">
-    <?php echo $passwordErr;?>
-    <br />
-
-    <button type="submit" value="Submit">Submit</button>
-
-    <?php
-if (isset($_GET["submit"])) {
-    // process the form contents...
-}
-?>
-            
-    </body>
 </html>

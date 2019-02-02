@@ -1,45 +1,74 @@
-<?php
-  include 'database.php';
+<?php include 'database.php';
 
-  if (isset($_POST['submit-login'])) {
-    // Check that the passed variables do not contain malicious code
-    $username = mysqli_real_escape_string($connection, $_POST['username']);
-    $password = mysqli_real_escape_string($connection, $_POST['password']);
+  function error_and_return($errormessage, $returnpage) {
+    header("Location: " . $returnpage . "?error=" . urlencode($errormessage));
+    exit();
+  }
 
-    if (!isset($username) || $username == '' || !isset($password) || $password == '') {
-      $error = "Please provide a username and password to login";
-      header("Location: index.php?error=" . urlencode($error));
-      exit();
+  // Check if the submit-login button is set in the HTTP header.
+  if (isset($_POST["submit-login"])) {
+    // If it is, retrieve the username and password fields.
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+    // Check that these are not empty. If they are, return an error message to the index page.
+    if (!isset($username) || $username == "" || !isset($password) || $password == "") {
+      error_and_return("Please provide a username and password to login", "index.php");
     }
     else {
-      $query = "SELECT * FROM users WHERE username='$username'";
-      $result = mysqli_query($connection, $query);
+      // If the fields are not empty, set up a query to retrieve the user details for the
+      // provided username, using placeholders to prevent SQL injections.
+      try {
+        $query = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+        $query->execute(array($username));
+        $result = $query->fetch();
+      } catch (PDOException $e) {
+        error_and_return("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "index.php");
+      }
+
+      // If the result from the query is empty, return an error message to the index page.
       if (!$result) {
-        die('Error: ' . mysqli_error($connection));
+        error_and_return("Could not find the provided username", "index.php");
       }
       else {
-        if (mysqli_num_rows($result) > 0) {
-          $userdata = mysqli_fetch_assoc($result);
-          if ($userdata["password"] == $password) {
-            // Test code
-            $error = "Success!";
-            header("Location: index.php?error=" . urlencode($error));
-            exit();
-          } else {
-            $error = "Incorrect password provided";
-            header("Location: index.php?error=" . urlencode($error));
-            exit();
-          }
+        // Else check that the password provided in the login attempt matches that of the selected user.
+        if ($result["password"] == $password) {
+          error_and_return("Success!");
         } else {
-          $error = "Could not find the provided username";
-          header("Location: index.php?error=" . urlencode($error));
-          exit();
+          error_and_return("Incorrect password provided, please try again", "index.php");
         }
       }
     }
+  } elseif (isset($_POST["submit-register"])) {
+    // Check if the submit-register button is set in the HTTP header. If it is, retrieve the user data.
+    $name = $_POST["name"];
+    $email = $_POST["email"];
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+    // Check that each field is not empty. If they are, return an error message to the registration page.
+    if (!isset($name) || $name == "" || !isset($email) || $email == "" || !isset($username) || $username == "" || !isset($password) || $password == "") {
+      error_and_return("Please ensure all fields have been completed", "registration.php");
+    } else {
+      // If the fields are not empty, set up a query to check that the username hasn't been taken already.
+      try {
+        $query = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+        $query->execute(array($username));
+        $result = $query->fetch();
+      } catch (PDOException $e) {
+        error_and_return("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "register.php");
+      }
+
+      // If the result from the query is empty, the username is valid. Otherwise, return an error message to the registration page.
+      if (!$result) {
+        error_and_return("Success! Pretended to add the new user to the database", "registration.php");
+      }
+      else {
+        error_and_return("That username is already taken, please try another one", "registration.php");
+      }
+    }
   } else {
-    $error = "Something went wrong processing the data";
-    header("Location: index.php?error=" . urlencode($error));
-    exit();
+    // The HTTP header does not reference a recognised button, so return an error to the index page.
+    error_and_return("Something went wrong processing the data");
   }
 ?>
