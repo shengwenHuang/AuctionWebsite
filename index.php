@@ -1,4 +1,4 @@
-<?php include "database.php" ?>
+<?php include "database.php"?>
 
 <!doctype html>
 <html>
@@ -20,11 +20,11 @@
         <input type="password" id="password" name="password" placeholder="Enter Your Password" /><br />
         <input id="login-btn" type="submit" name="submit-login" value="Login" /><br />
       </form>
-      <?php if (isset($_GET['error'])) : ?>
+      <?php if (isset($_GET['error'])): ?>
       <div class="error">
         <?php echo $_GET['error']; ?>
       </div>
-      <?php endif; ?>
+      <?php endif;?>
     </div>
     <div id="register-button">
       <form method="post" action="registration.php">

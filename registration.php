@@ -20,7 +20,7 @@
                 <input type="text" name="username" placeholder="Enter your username"> <br />
                 <input type="text" name="password" placeholder="Enter your password"> <br />
 
-                <input id="finish-registration" type="submit" name="submit-register" value="Submit" />
+                <input id="finish-registration" type="submit" name="submit-register" value="Register" />
             </form>
             <?php if (isset($_GET['error'])) : ?>
             <div class="error">
