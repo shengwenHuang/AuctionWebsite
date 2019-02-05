@@ -12,9 +12,9 @@
 <body>
   <div id="body-content">
     <header>
-      <?php if (isset($_GET['error'])): ?>
+      <?php if (isset($_GET['message'])): ?>
         <div class="error">
-          <h1><?php echo $_GET['error']; ?></h1>
+          <h1><?php echo $_GET['message']; ?></h1>
         </div>
       <?php endif;?>
     </header>

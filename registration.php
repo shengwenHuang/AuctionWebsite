@@ -22,9 +22,9 @@
 
                 <input id="finish-registration" type="submit" name="submit-register" value="Register" />
             </form>
-            <?php if (isset($_GET['error'])) : ?>
+            <?php if (isset($_GET['message'])) : ?>
             <div class="error">
-                <?php echo $_GET['error']; ?>
+                <?php echo $_GET['message']; ?>
             </div>
             <?php endif; ?>
         </div>

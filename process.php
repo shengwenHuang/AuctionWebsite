@@ -1,7 +1,7 @@
 <?php include 'database.php';
 
   function message_and_move($message, $movetopage) {
-    header("Location: " . $movetopage . "?error=" . urlencode($message));
+    header("Location: " . $movetopage . "?message=" . urlencode($message));
     exit();
   }
 

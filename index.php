@@ -20,9 +20,9 @@
         <input type="password" id="password" name="password" placeholder="Enter Your Password" /><br />
         <input id="login-btn" type="submit" name="submit-login" value="Login" /><br />
       </form>
-      <?php if (isset($_GET['error'])): ?>
+      <?php if (isset($_GET['message'])): ?>
       <div class="error">
-        <?php echo $_GET['error']; ?>
+        <?php echo $_GET['message']; ?>
       </div>
       <?php endif;?>
     </div>
