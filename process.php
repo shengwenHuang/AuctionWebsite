@@ -53,7 +53,7 @@
       // valid username, alphanumeric & longer than or equals 5 chars
       $userErr = "";
     } else {
-      $userErr = "<p> Please enter a usename with 5 or more characters. Only alphabetic characters are allowed</p>";
+      $userErr = "<p> Please enter a usename with 5 or more characters. Only alphanumeric characters are allowed</p>";
     }
     
     if (empty($email)) {
