@@ -10,11 +10,11 @@
   // Check if the submit-login button is set in the HTTP header.
   if (isset($_POST["submit-login"])) {
     // If it is, retrieve the username and password fields.
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = trim($_POST["username"]);
+    $password = $_POST["password"]; // STORE AS HASH CODE
 
     // Check that these are not empty. If they are, return an error message to the index page.
-    if (!isset($username) || $username == "" || !isset($password) || $password == "") {
+    if (!isset($username) || empty($username) || !isset($password) || empty($password)) {
       message_and_move("Please provide a username and password to login", "index.php");
     }
     else {
@@ -45,13 +45,13 @@
   // ------------------------------------------------------------
   } elseif (isset($_POST["submit-register"])) {
     // Check if the submit-register button is set in the HTTP header. If it is, retrieve the user data.
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $name = trim($_POST["name"]);
+    $email = trim($_POST["email"]); // filter_var to validate with regex
+    $username = trim($_POST["username"]);
+    $password = $_POST["password"]; // STORE AS HASH CODE
 
     // Check that each field is not empty. If they are, return an error message to the registration page.
-    if (!isset($name) || $name == "" || !isset($email) || $email == "" || !isset($username) || $username == "" || !isset($password) || $password == "") {
+    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) {
       message_and_move("Please ensure all fields have been completed", "registration.php");
     } else {
       // If the fields are not empty, set up a query to check that the username hasn't been taken already.
