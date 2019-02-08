@@ -23,14 +23,18 @@
             foreach ($auctionArray as $auctionID) {
                 $query->execute(array($userID, $auctionID["auctionID"]));
                 $returnedRow = $query->fetch();
-                $rowData = array_push($rowData, $returnedRow);
+                if (empty($rowData)) {
+                    $rowData = array($returnedRow);
+                } else {
+                    $rowData = array_push($rowData, $returnedRow);
+                }
             }
 
             $query = $pdo->prepare("SELECT MAX(bidAmount) AS highestBid, bidDatetime AS highestBiddt FROM bids
                                     WHERE auctionID = ?");
 
             for ($i = 0; $i < count($auctionArray); $i++) {
-                $query->execute(array($auctionArray[$i]));
+                $query->execute(array($auctionArray[$i]["auctionID"]));
                 $rowData[$i] = array_merge($rowData[$i], $query->fetch());
             }
 
