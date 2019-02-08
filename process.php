@@ -48,20 +48,33 @@
     $email = trim($_POST["email"]); // filter_var to validate with regex
     $username = trim($_POST["username"]);
     $password = $_POST["password"]; // STORE AS HASH CODE
+
+    if (empty($email)) {
+      $emailErr = "";
+    }
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "<p class='errText'>Invalid email format</p>";
+    }
+    else {
+      $emailErr = "";
+    }
+    // message_and_move($emailErr, "registration.php");
+
     
     if (preg_match("/^.*(?=.{8,})(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$/", $password) === 0) {
     $errPass = '<p class="errText">Password must be at least 8 characters and must contain at least one lower case letter, one upper case letter and one digit</p>';
     } else {
-      $errPass = "";
-      $password = password_hash($password, PASSWORD_DEFAULT);
-      // message_and_move($password, "registration.php");
-    }
+        $errPass = "";
+
+        // message_and_move($password, "registration.php");
+      }
+    $password = password_hash($password, PASSWORD_DEFAULT);
 
 
     // Check that each field is not empty. If they are, return an error message to the registration page.
-    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass)) {
-      if (!empty($errPass)) {
-        message_and_move($errPass, "registration.php");
+    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass || !empty($emailErr))) {
+      if (!empty($errPass) || !empty($emailErr)) {
+        message_and_move($emailErr . $errPass, "registration.php");
       }
       else {
         message_and_move("Please ensure all fields have been completed", "registration.php");
