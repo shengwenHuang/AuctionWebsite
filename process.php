@@ -11,10 +11,9 @@
   if (isset($_POST["submit-login"])) {
     // If it is, retrieve the username and password fields.
     $username = trim($_POST["username"]);
-    $password = $_POST["password"]; // STORE AS HASH CODE
 
     // Check that these are not empty. If they are, return an error message to the index page.
-    if (!isset($username) || empty($username) || !isset($password) || empty($password)) {
+    if (!isset($username) || empty($username)) {
       message_and_move("Please provide a username and password to login", "index.php");
     }
     else {
@@ -34,8 +33,8 @@
       }
       else {
         // Else check that the password provided in the login attempt matches that of the selected user.
-        if ($result["password"] == $password) {
-          message_and_move("Successfully logged in to your account!", "loggedin.php");
+          if(password_verify($_POST["password"],$result["password"])) {
+          message_and_move("Successfully logged in to your account!", "homepage.php");
         } else {
           message_and_move("Incorrect password provided, please try again", "index.php");
         }
@@ -49,18 +48,38 @@
     $email = trim($_POST["email"]); // filter_var to validate with regex
     $username = trim($_POST["username"]);
     $password = $_POST["password"]; // STORE AS HASH CODE
+
+    if(preg_match('/^\w{5,}$/', $username)) { // \w equals "[0-9A-Za-z_]"
+      // valid username, alphanumeric & longer than or equals 5 chars
+      $userErr = "";
+    } else {
+      $userErr = "<p> Please enter a usename with 5 or more characters. Only alphanumeric characters are allowed</p>";
+    }
+    
+    if (empty($email)) {
+      $emailErr = "";
+    }
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "<p class='errText'>Invalid email format\n</p>";
+    }
+    else {
+      $emailErr = "";
+    }
+    // message_and_move($emailErr, "registration.php");
+
     
     if (preg_match("/^.*(?=.{8,})(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$/", $password) === 0) {
     $errPass = '<p class="errText">Password must be at least 8 characters and must contain at least one lower case letter, one upper case letter and one digit</p>';
     } else {
-      $errPass = "";
-    }
+        $errPass = "";
+      }
+    $password = password_hash($password, PASSWORD_DEFAULT);
 
 
     // Check that each field is not empty. If they are, return an error message to the registration page.
-    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass)) {
-      if (!empty($errPass)) {
-        message_and_move($errPass, "registration.php");
+    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass) || !empty($emailErr) || !empty($userErr)) {
+      if (!empty($errPass) || !empty($emailErr) || !empty($userErr)) {
+        message_and_move($userErr . $emailErr . $errPass, "registration.php");
       }
       else {
         message_and_move("Please ensure all fields have been completed", "registration.php");
@@ -87,7 +106,7 @@
 
         // If the execution of the statement returned true, the insertion was successful. Otherwise, raise an error.
         if ($result) {
-          message_and_move("Success! Added new user to the database", "index.php");
+          message_and_move("Success! Added new user to the database" . $password, "index.php");
         } else {
           message_and_move("Error inserting user into database, user was not added", "registration.php");
         }
