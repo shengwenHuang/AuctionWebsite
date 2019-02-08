@@ -47,8 +47,9 @@
     $name = trim($_POST["name"]);
     $email = trim($_POST["email"]); // filter_var to validate with regex
     $username = trim($_POST["username"]);
-    $password = $_POST["password"]; // STORE AS HASH CODE
+    $password = $_POST["password"];
 
+    // Username validation
     if(preg_match('/^\w{5,}$/', $username)) { // \w equals "[0-9A-Za-z_]"
       // valid username, alphanumeric & longer than or equals 5 chars
       $userErr = "";
@@ -56,6 +57,7 @@
       $userErr = "<p> Please enter a usename with 5 or more characters. Only alphanumeric characters are allowed</p>";
     }
     
+    // Email validation
     if (empty($email)) {
       $emailErr = "";
     }
@@ -65,18 +67,19 @@
     else {
       $emailErr = "";
     }
-    // message_and_move($emailErr, "registration.php");
-
     
+    // Password validation (check if > 8 characters and contains lower and upper case letter)
     if (preg_match("/^.*(?=.{8,})(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$/", $password) === 0) {
     $errPass = '<p class="errText">Password must be at least 8 characters and must contain at least one lower case letter, one upper case letter and one digit</p>';
     } else {
         $errPass = "";
       }
+    
+    // Hash password
     $password = password_hash($password, PASSWORD_DEFAULT);
 
 
-    // Check that each field is not empty. If they are, return an error message to the registration page.
+    // Check that each field is not empty. If they are, return an error message to the registration page. If all fields are filled, return any validation messages to user
     if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass) || !empty($emailErr) || !empty($userErr)) {
       if (!empty($errPass) || !empty($emailErr) || !empty($userErr)) {
         message_and_move($userErr . $emailErr . $errPass, "registration.php");
