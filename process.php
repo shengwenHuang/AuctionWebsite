@@ -49,11 +49,18 @@
     $username = trim($_POST["username"]);
     $password = $_POST["password"]; // STORE AS HASH CODE
 
+    if(preg_match('/^\w{5,}$/', $username)) { // \w equals "[0-9A-Za-z_]"
+      // valid username, alphanumeric & longer than or equals 5 chars
+      $userErr = "";
+    } else {
+      $userErr = "<p> Please enter a usename with 5 or more characters. Only alphabetic characters are allowed</p>";
+    }
+    
     if (empty($email)) {
       $emailErr = "";
     }
     else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      $emailErr = "<p class='errText'>Invalid email format</p>";
+      $emailErr = "<p class='errText'>Invalid email format\n</p>";
     }
     else {
       $emailErr = "";
@@ -65,16 +72,14 @@
     $errPass = '<p class="errText">Password must be at least 8 characters and must contain at least one lower case letter, one upper case letter and one digit</p>';
     } else {
         $errPass = "";
-
-        // message_and_move($password, "registration.php");
       }
     $password = password_hash($password, PASSWORD_DEFAULT);
 
 
     // Check that each field is not empty. If they are, return an error message to the registration page.
-    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass || !empty($emailErr))) {
-      if (!empty($errPass) || !empty($emailErr)) {
-        message_and_move($emailErr . $errPass, "registration.php");
+    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass) || !empty($emailErr) || !empty($userErr)) {
+      if (!empty($errPass) || !empty($emailErr) || !empty($userErr)) {
+        message_and_move($userErr . $emailErr . $errPass, "registration.php");
       }
       else {
         message_and_move("Please ensure all fields have been completed", "registration.php");
