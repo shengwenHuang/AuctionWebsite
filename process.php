@@ -11,10 +11,9 @@
   if (isset($_POST["submit-login"])) {
     // If it is, retrieve the username and password fields.
     $username = trim($_POST["username"]);
-    $password = $_POST["password"]; // STORE AS HASH CODE
 
     // Check that these are not empty. If they are, return an error message to the index page.
-    if (!isset($username) || empty($username) || !isset($password) || empty($password)) {
+    if (!isset($username) || empty($username)) {
       message_and_move("Please provide a username and password to login", "index.php");
     }
     else {
@@ -34,8 +33,8 @@
       }
       else {
         // Else check that the password provided in the login attempt matches that of the selected user.
-        if ($result["password"] == $password) {
-          message_and_move("Successfully logged in to your account!", "loggedin.php");
+          if(password_verify($_POST["password"],$result["password"])) {
+          message_and_move("Successfully logged in to your account!", "homepage.php");
         } else {
           message_and_move("Incorrect password provided, please try again", "index.php");
         }
@@ -54,6 +53,8 @@
     $errPass = '<p class="errText">Password must be at least 8 characters and must contain at least one lower case letter, one upper case letter and one digit</p>';
     } else {
       $errPass = "";
+      $password = password_hash($password, PASSWORD_DEFAULT);
+      // message_and_move($password, "registration.php");
     }
 
 
@@ -87,7 +88,7 @@
 
         // If the execution of the statement returned true, the insertion was successful. Otherwise, raise an error.
         if ($result) {
-          message_and_move("Success! Added new user to the database", "index.php");
+          message_and_move("Success! Added new user to the database" . $password, "index.php");
         } else {
           message_and_move("Error inserting user into database, user was not added", "registration.php");
         }
