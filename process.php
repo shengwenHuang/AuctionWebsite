@@ -1,4 +1,6 @@
-<?php include 'database.php';
+<?php 
+  require "dbHelper.php";
+  $dbHelper = new DBHelper();
 
   function message_and_move($message, $movetopage) {
     header("Location: " . $movetopage . "?message=" . urlencode($message));
@@ -20,9 +22,7 @@
       // If the fields are not empty, set up a query to retrieve the user details for the
       // provided username, using placeholders to prevent SQL injections.
       try {
-        $query = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-        $query->execute(array($username));
-        $result = $query->fetch();
+        $result = $dbHelper->fetch_user($username);
       } catch (PDOException $e) {
         message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "index.php");
       }
@@ -91,9 +91,7 @@
     } else {
       // If the fields are not empty, set up a query to check that the username hasn't been taken already.
       try {
-        $query = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-        $query->execute(array($username));
-        $result = $query->fetch();
+        $result = $dbHelper->fetch_user($username);
       } catch (PDOException $e) {
         message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "register.php");
       }
@@ -101,8 +99,7 @@
       // If the result from the query is empty, the username is valid, so add the new user details to the database.
       if (!$result) {
         try {
-          $query = $pdo->prepare("INSERT INTO users (userType, username, password, email) VALUES (?, ?, ?, ?)");
-          $result = $query->execute(array('c', $username, $password, $email));
+          $result = $dbHelper->insert_user($username, $password, $email);
         } catch (PDOException $e) {
           message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "register.php");
         }

@@ -1,11 +1,14 @@
-<?php include "database.php"?>
+<?php
+  require "dbHelper.php";
+  $dbHelper = new DBHelper();
+?>
+
 <!doctype html>
 <html>
 
 <head>
   <meta charset="utf-8" />
   <title>EbayLite</title>
-  <!-- <link rel="stylesheet" href="css/style.css" type="text/css"> -->
 </head>
 
 <body>

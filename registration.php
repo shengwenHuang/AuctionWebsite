@@ -1,3 +1,8 @@
+<?php
+  require "dbHelper.php";
+  $dbHelper = new DBHelper();
+?>
+
 <!doctype html>
 <html>
 
@@ -15,10 +20,10 @@
 
         <div id="user-input">
             <form method="post" action="process.php">
-                <input type="text" name="name" placeholder="Enter your name"> <br />
-                <input type="text" name="email" placeholder="Enter your email"> <br />
-                <input type="text" name="username" placeholder="Enter your username"> <br />
-                <input type="password" name="password" placeholder="Enter your password"> <br />
+                <input type="text" name="name" placeholder="Enter your name"> <br/>
+                <input type="text" name="email" placeholder="Enter your email"> <br/>
+                <input type="text" name="username" placeholder="Enter your username"> <br/>
+                <input type="password" name="password" placeholder="Enter your password"> <br/>
 
                 <input id="finish-registration" type="submit" name="submit-register" value="Register" />
             </form>
