@@ -41,6 +41,8 @@
           // session_start();
           // to change a session variable, just overwrite it
           $_SESSION["username"] = "$username";
+          $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
+          // echo "<p>" . $_SESSION['userID'] . "hello </p>";
           message_and_move("Successfully logged in to your account! " . $_SESSION["username"], "homepage.php");
           
 

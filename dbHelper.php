@@ -138,6 +138,17 @@ class DBHelper
         }
     }
 
+    public function fetch_user_id_from_username($username){
+        $query = $this->dbconnection->prepare(
+            "SELECT userID
+            FROM users
+            WHERE username = ?"
+        );
+        $query->execute(array($username));
+        $row = $query->fetch();
+        return $row["userID"];
+    }
+
     /**
      * Destroy the database connection when the object is no longer required
      *
