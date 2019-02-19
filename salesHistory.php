@@ -1,26 +1,15 @@
-<?php include "header.php"?>
 <?php
+  include "header.php";
   require "dbHelper.php";
-  $dbHelper = new DBHelper();
+  $userID = 2;
+  $dbHelper = new DBHelper($userID);
 ?>
 
 <!doctype html>
 <html>
-<body>
 
+<body>
     <?php
-        /*Table with item, Sale price, buyerID, auction end date*/
-    ?>
-    <?php
-        $userID = 2;
-        /*$query = $pdo -> prepare('SELECT i.itemName, i.description, a.highestBid, a.endDatetime, p.buyerID
-                  FROM items as i, auctions as a, purchaseHistory as p
-                  WHERE i.itemID = a.itemID
-                  AND a.auctionID = p.auctionID
-                  AND a.endDatetime < now()
-                  AND i.sellerID = ?');
-        $query -> execute(array($userID));
-        $result = $query -> fetchall();*/
         $result = $dbHelper -> fetch_sales_history($userID);
         if ($result) {
             echo '<table border="0" cellspacing="10" cellpadding="2">

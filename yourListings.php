@@ -1,27 +1,15 @@
-<?php include "header.php";?>
 <?php
+  include "header.php";
   require "dbHelper.php";
-  $dbHelper = new DBHelper();
+  $userID = 1;
+  $dbHelper = new DBHelper($userID);
 ?>
 
 <!doctype html>
 <html>
 
 <body>
-
     <?php
-        /*Table with item, Number of bids (colour the row if at least one bid), auction end date*/
-    ?>
-    <?php
-        $userID = 1;
-        /*$query = $pdo -> prepare('SELECT i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
-                  FROM items as i, bids as b, auctions as a
-                  WHERE i.itemID = a.itemID
-                  AND a.auctionID = b.auctionID
-                  AND i.sellerID = ?
-                  GROUP BY i.itemName, i.description, a.endDatetime');
-        $query -> execute(array($userID));
-        $result = $query -> fetchall();*/
         $result = $dbHelper -> fetch_your_listing($userID);
         if ($result) {
             echo '<table border="0" cellspacing="10" cellpadding="2">
