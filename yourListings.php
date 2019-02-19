@@ -1,5 +1,8 @@
 <?php include "header.php";?>
-<?php include "database.php";?>
+<?php
+  require "dbHelper.php";
+  $dbHelper = new DBHelper();
+?>
 
 <!doctype html>
 <html>
@@ -11,14 +14,15 @@
     ?>
     <?php
         $userID = 1;
-        $query = $pdo -> prepare('SELECT i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
+        /*$query = $pdo -> prepare('SELECT i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
                   FROM items as i, bids as b, auctions as a
                   WHERE i.itemID = a.itemID
                   AND a.auctionID = b.auctionID
                   AND i.sellerID = ?
                   GROUP BY i.itemName, i.description, a.endDatetime');
         $query -> execute(array($userID));
-        $result = $query -> fetchall();
+        $result = $query -> fetchall();*/
+        $result = $dbHelper -> fetch_your_listing($userID);
         if ($result) {
             echo '<table border="0" cellspacing="10" cellpadding="2">
             <tr>
