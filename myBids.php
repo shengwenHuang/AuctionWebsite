@@ -1,5 +1,7 @@
+<?php include "redirectIfNotLoggedIn.php"?>
 <?php include "header.php"?>
 <?php include "database.php"?>
+
 
 <!doctype html>
 <html>
