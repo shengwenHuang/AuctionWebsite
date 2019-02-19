@@ -50,13 +50,35 @@ class DBHelper {
 
     function fetch_purchase_history($userID) {
         $query = $this->dbconnection->prepare("SELECT i.itemName, i.description, a.highestBid as amountPaid, a.endDatetime as purchaseDate, i.sellerID
-        FROM items as i, auctions as a, purchaseHistory as p
-        WHERE i.itemID = a.itemID
-        AND a.auctionID = p.auctionID
-        AND a.endDatetime < now()
-        AND p.buyerID = ?");
-        $query->execute(array($userID));
-        return $query->fetchall();
+            FROM items as i, auctions as a, purchaseHistory as p
+            WHERE i.itemID = a.itemID
+            AND a.auctionID = p.auctionID
+            AND a.endDatetime < now()
+            AND p.buyerID = ?");
+        $query -> execute(array($userID));
+        return $query -> fetchall();
+    }
+
+    function fetch_sales_history($userID) {
+        $query = $this->dbconnection -> prepare('SELECT i.itemName, i.description, a.highestBid, a.endDatetime, p.buyerID
+            FROM items as i, auctions as a, purchaseHistory as p
+            WHERE i.itemID = a.itemID
+            AND a.auctionID = p.auctionID
+            AND a.endDatetime < now()
+            AND i.sellerID = ?');
+        $query -> execute(array($userID));
+        return $query -> fetchall();
+    }
+
+    function fetch_your_listing($userID) {
+        $query = $this->dbconnection -> prepare('SELECT i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
+            FROM items as i, bids as b, auctions as a
+            WHERE i.itemID = a.itemID
+            AND a.auctionID = b.auctionID
+            AND i.sellerID = ?
+            GROUP BY i.itemName, i.description, a.endDatetime');
+        $query -> execute(array($userID));
+        return $query -> fetchall();
     }
     /**
      * Destroy the database connection when the object is no longer required
