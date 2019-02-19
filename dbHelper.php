@@ -148,6 +148,20 @@ class DBHelper
         $row = $query->fetch();
         return $row["userID"];
     }
+    public function fetch_watch_list()
+    {
+        if (isset($this->userID)) {
+            $query = $this->dbconnection->prepare(
+                "SELECT i.itemName, i.description, b.bidAmount, a.highestBid, a.endDatetime
+                FROM items as i, bids as b, auctions as a
+                WHERE i.itemID = a.itemID
+                AND a.auctionID = b.auctionID
+                AND b.userID = ?"
+            );
+            $query->execute(array($this->userID));
+            return $query->fetchall();
+        }
+    }
 
     /**
      * Destroy the database connection when the object is no longer required
