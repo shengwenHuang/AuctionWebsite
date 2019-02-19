@@ -48,6 +48,16 @@ class DBHelper {
         return $query->execute(array($username, $password, $email));
     }
 
+    function fetch_purchase_history($userID) {
+        $query = $this->dbconnection->prepare("SELECT i.itemName, i.description, a.highestBid as amountPaid, a.endDatetime as purchaseDate, i.sellerID
+        FROM items as i, auctions as a, purchaseHistory as p
+        WHERE i.itemID = a.itemID
+        AND a.auctionID = p.auctionID
+        AND a.endDatetime < now()
+        AND p.buyerID = ?");
+        $query->execute(array($userID));
+        return $query->fetchall();
+    }
     /**
      * Destroy the database connection when the object is no longer required
      * 
