@@ -1,5 +1,6 @@
 <?php
 class DBHelper {
+    private $userID;
     private $dbconnection;
 
     /**
@@ -9,7 +10,10 @@ class DBHelper {
      * connection parameters to create a DSN (Data Source Name) and pass an options array to the PDO as its last
      * parameter to define certain behaviours. Show some basic details about the connection if it is made successfully. 
      */ 
-    function __construct() {
+    function __construct($userID) {
+        // Initialise user ID for the current session.
+        $this->userID = $userID;
+
         // Initialise database connection credentials.
         $dbhost = "localhost";
         $dbname   = "ebaylite";
@@ -46,6 +50,37 @@ class DBHelper {
     function insert_user($username, $password, $email) {
         $query = $this->dbconnection->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
         return $query->execute(array($username, $password, $email));
+    }
+
+    function fetch_auctions_by_user() {
+        if (isset($this->userID)) {
+            $query = $this->dbconnection->prepare("SELECT DISTINCT(auctionID) FROM bids WHERE userID = ?");
+            $query->execute(array($this->userID));
+            return $query->fetchall();
+        }
+    }
+
+    function fetch_listing_by_user_auction($auctionID) {
+        if (isset($this->userID)) {
+            // Create a query to retrieve item, bid and auction details for the maximum bid made by the user in a given auction
+            $query = $this->dbconnection->prepare(
+                "SELECT i.itemName, i.description, MAX(b.bidAmount) AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
+                FROM items AS i, auctions AS a, bids AS b
+                WHERE b.userID = ?
+                AND b.auctionID = ?
+                AND i.itemID = a.itemID
+                AND a.auctionID = b.auctionID"
+            );
+            $query->execute(array($this->userID, $auctionID));
+            return $query->fetch();
+        }
+    }
+
+    function fetch_max_bid_for_auction($auctionID) {
+        // Create a query to retrieve the bid details of the highest overall bid for a given auction
+        $query = $this->dbconnection->prepare("SELECT MAX(bidAmount) AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?");
+        $query->execute(array($auctionID));
+        return $query->fetch();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php 
   require "dbHelper.php";
-  $dbHelper = new DBHelper();
+  $dbHelper = new DBHelper(null);
   session_start();
 
   function message_and_move($message, $movetopage) {

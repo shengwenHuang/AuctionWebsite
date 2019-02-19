@@ -1,47 +1,34 @@
-<?php include "redirectIfNotLoggedIn.php"?>
-<?php include "header.php"?>
-<?php include "database.php"?>
-
+<?php 
+    include "redirectIfNotLoggedIn.php";
+    include "header.php";
+    require "dbHelper.php";
+    $userID = 9; // Need to change this to variable passed between pages
+    $dbHelper = new DBHelper($userID);
+?>
 
 <!doctype html>
 <html>
 
 <body>
     <?php
-        $userID = 9; // Need to change this to variable passed between pages
-
         // Retrieve a list of distinct auctionIDs that the current user has bid on
-        $query = $pdo->prepare("SELECT DISTINCT(auctionID) FROM bids WHERE userID = ?");
-        $query->execute(array($userID));
-        $auctionArray = $query->fetchall();
+        $auctionArray = $dbHelper->fetch_auctions_by_user();
 
         if ($auctionArray) {
             // Initialise an empty array for the displayed table's row data
             $rowData = array();
 
-            // Create a query to retrieve item, bid and auction details for the maximum bid made by the user in a given auction
-            $query = $pdo->prepare("SELECT i.itemName, i.description, MAX(b.bidAmount) AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
-                                   FROM items AS i, auctions AS a, bids AS b
-                                   WHERE b.userID = ?
-                                   AND b.auctionID = ?
-                                   AND i.itemID = a.itemID
-                                   AND a.auctionID = b.auctionID");
-
-            // Run this query for each auction in the auctions list and save each output row to the rowData array
+            // Retrieve item, bid and auction details for the maximum bid made by the user in each given auction
+            // and save each output row to the rowData array
             foreach ($auctionArray as $auction) {
-                $query->execute(array($userID, $auction["auctionID"]));
-                $returnedRow = $query->fetch();
+                $returnedRow = $dbHelper->fetch_listing_by_user_auction($auction["auctionID"]);
                 array_push($rowData, $returnedRow);
             }
 
-            // Create another query to retrieve the bid details of the highest overall bid for a given auction
-            $query = $pdo->prepare("SELECT MAX(bidAmount) AS highestBid, bidDatetime AS highestBiddt FROM bids
-                                    WHERE auctionID = ?");
-
-            // Run this query for each auction in the auctions list and merge the output with the corresponding results already in the rowData array
+            // Retrieve the current maximum bid for each given auction and append this to the corresponding row in
+            // the rowData array
             for ($i = 0; $i < count($auctionArray); $i++) {
-                $query->execute(array($auctionArray[$i]["auctionID"]));
-                $highestBidInfo = $query->fetch();
+                $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($auctionArray[$i]["auctionID"]);
                 $rowData[$i] = array_merge($rowData[$i], $highestBidInfo);
             }
 

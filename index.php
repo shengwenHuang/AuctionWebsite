@@ -1,6 +1,6 @@
 <?php
   require "dbHelper.php";
-  $dbHelper = new DBHelper();
+  $dbHelper = new DBHelper(null);
 ?>
 
 <!doctype html>
