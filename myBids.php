@@ -8,7 +8,7 @@
 
 <body>
     <?php
-        $userID = 9; // Need to change this to variable passed betwene pages
+        $userID = 9; // Need to change this to variable passed between pages
 
         // Retrieve a list of distinct auctionIDs that the current user has bid on
         $query = $pdo->prepare("SELECT DISTINCT(auctionID) FROM bids WHERE userID = ?");
@@ -70,7 +70,7 @@
             unset($rowData);
         } else {
             // If no auction bids were found for the current user, indicate this to them
-            echo '<h1>No bids made<h1>';
+            echo '<h1>No bids made</h1>';
         }   
     ?>
 </body>
