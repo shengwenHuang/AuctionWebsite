@@ -1,6 +1,7 @@
 <?php 
   require "dbHelper.php";
   $dbHelper = new DBHelper();
+  session_start();
 
   function message_and_move($message, $movetopage) {
     header("Location: " . $movetopage . "?message=" . urlencode($message));
@@ -34,7 +35,15 @@
       else {
         // Else check that the password provided in the login attempt matches that of the selected user.
           if(password_verify($_POST["password"],$result["password"])) {
-          message_and_move("Successfully logged in to your account!", "homepage.php");
+          // remove all session variables
+          // session_unset();
+          // session_destroy();
+          // session_start();
+          // to change a session variable, just overwrite it
+          $_SESSION["username"] = "$username";
+          message_and_move("Successfully logged in to your account! " . $_SESSION["username"], "homepage.php");
+          
+
         } else {
           message_and_move("Incorrect password provided, please try again", "index.php");
         }
