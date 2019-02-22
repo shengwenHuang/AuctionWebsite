@@ -17,12 +17,12 @@ echo "Username: ",$_SESSION["username"],"<br/>","Email address: ",$_SESSION["ema
 ?>
     
 <!--change password and email address-->
-<form action="ChangeEmail.php" method="post">
-    <input type="button" value="ChangeEmailAddress">
-</form>
-<form action="ChangePassword.php" method="post">
-    <input type="button" value="ChangePassword">
-</form>
+<form method="post" action="ChangeEmail.php">
+    <input type="button"  value="ChangeEmail" />
+    </form>
+<form method="post" action="ChangePassword.php">
+    <input type="button"  value="ChangePassword" />
+    </form>
 
 </body>
 </html>

@@ -2,29 +2,22 @@
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
 ?>
-
 <!doctype html>
 <html>
-
 <head>
-    <meta charset="utf-8" />
-    <title>EbayLite Registration</title>
-    <!-- <link rel="stylesheet" href="css/style.css" type="text/css"> -->
 </head>
-
 <body>
     <div id="body-content">
         <header>
-            <h1>New User Registration</h1>
+            <h1>Change email address</h1>
         </header>
 
         <div id="user-input">
             <form method="post" action="process.php">
-                <input type="text" name="name" placeholder="Enter your name"> <br/>
-                <input type="text" name="email" placeholder="Enter your email"> <br/>
                 <input type="text" name="username" placeholder="Enter your username"> <br/>
                 <input type="password" name="password" placeholder="Enter your password"> <br/>
-                <input id="finish-registration" type="submit" name="submit-register" value="Register" />
+                <input type="password" name="newemail" placeholder="Enter your new Email address"> <br/>
+                <input id="change-email" type="submit" name="change-email" value="submit" />
             </form>
             <?php if (isset($_GET['message'])) : ?>
             <div class="error">
