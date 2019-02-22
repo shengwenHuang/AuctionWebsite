@@ -163,6 +163,15 @@ class DBHelper
         }
     }
 
+    public function get_catagories() {
+        $query = $this->dbconnection->prepare(
+            "SELECT categoryName
+            FROM categories"
+        );
+        $query->execute();
+        return $query->fetchall();
+    }
+
     /**
      * Destroy the database connection when the object is no longer required
      *
