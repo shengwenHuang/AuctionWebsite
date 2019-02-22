@@ -44,10 +44,8 @@
           $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
           // echo "<p>" . $_SESSION['userID'] . "hello </p>";
           message_and_move("Successfully logged in to your account! " . $_SESSION["username"], "homepage.php");
-          
-
         } else {
-          message_and_move("Incorrect password provided, please try again", "index.php");
+          message_and_move("Incorrect password provided, please try again", "homepage.php");
         }
       }
     }
@@ -89,9 +87,96 @@
     // Hash password
     $password = password_hash($password, PASSWORD_DEFAULT);
 
+} elseif (isset($_POST["change-email"])) {
+    // If it is, retrieve the username and password fields.
+    $username = trim($_POST["username"]);
+    $newemail = trim($_POST["newemail"]);
+    $password = $_POST["password"];
+    // Check that these are not empty. If they are, return an error message to the index page.
+    if (!isset($username) || empty($username)) {
+      message_and_move("Please provide a username", "ChangeEmail.php");
+    }
+    else {
+      // If the fields are not empty, set up a query to retrieve the user details for the
+      // provided username, using placeholders to prevent SQL injections.
+      try {
+        $result = $dbHelper->fetch_user($username);
+      } catch (PDOException $e) {
+        message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "ChangeEmail.php");
+      }
 
+      // If the result from the query is empty, return an error message to the index page.
+      if (!$result) {
+        message_and_move("Could not find the provided username", "ChangeEmail.php");
+      }
+      else {
+        // Else check that the password provided in the login attempt matches that of the selected user.
+          if(password_verify($_POST["password"],$result["password"])) {
+          // remove all session variables
+          // session_unset();
+          // session_destroy();
+          // session_start();
+          // to change a session variable, just overwrite it
+          $_SESSION["username"] = "$username";
+          $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
+          $email = $newemail;
+          // echo "<p>" . $_SESSION['userID'] . "hello </p>";
+          message_and_move("Email Address has been changed successfully " . $_SESSION["username"], "updateAccount.php");
+          
+
+        } else {
+          message_and_move("Incorrect password provided, please try again", "ChangeEmail.php");
+        }
+      }
+    }
+
+ } elseif (isset($_POST["change-password"])) {
+    // If it is, retrieve the username and password fields.
+    $username = trim($_POST["username"]);
+    $password = $_POST["password"];
+    $newpassword1 = $_POST["newpassword1"];
+    $newpassword2 = $_POST["newpassword2"];
+    // Check that these are not empty. If they are, return an error message to the index page.
+    if (!isset($username) || empty($username)) {
+      message_and_move("Please provide a username", "ChangePassword.php");
+    } else {
+      // If the fields are not empty, set up a query to retrieve the user details for the
+      // provided username, using placeholders to prevent SQL injections.
+      try {
+        $result = $dbHelper->fetch_user($username);
+      } catch (PDOException $e) {
+        message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "ChangePassword.php");
+      }
+
+      // If the result from the query is empty, return an error message to the index page.
+            if (!$result) {
+        message_and_move("Could not find the provided username", "ChangePassword.php");
+            } else {
+                if($newpassword1!==$newpassword2){
+              message_and_move("Please enter the same new passwords", "ChangePassword.php");
+                }else{
+          // Else check that the password provided in the login attempt matches that of the selected user.
+                   if(password_verify($_POST["password"],$result["password"])) {
+          // remove all session variables
+          // session_unset();
+          // session_destroy();
+          // session_start();
+          // to change a session variable, just overwrite it
+          $_SESSION["username"] = "$username";
+          $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
+          $password = $newpassword1;
+          // echo "<p>" . $_SESSION['userID'] . "hello </p>";
+          message_and_move("Password has been changed successfully " . $_SESSION["username"], "updateAccount.php");
+          
+
+                } else {
+          message_and_move("Incorrect password provided, please try again", "ChangePassword.php");
+                }
+            }
+        }
+    }
     // Check that each field is not empty. If they are, return an error message to the registration page. If all fields are filled, return any validation messages to user
-    if (!isset($name) || empty($name) || !isset($email) || empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass) || !empty($emailErr) || !empty($userErr)) {
+    if (!isset($name) || empty($name) || !isset($email) || !isset($newemail)|| empty($email) || !isset($username) || empty($username) || !isset($password) || empty($password) || !empty($errPass) || !empty($emailErr) || !empty($userErr)) {
       if (!empty($errPass) || !empty($emailErr) || !empty($userErr)) {
         message_and_move($userErr . $emailErr . $errPass, "registration.php");
       }
