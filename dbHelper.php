@@ -163,6 +163,37 @@ class DBHelper
         }
     }
 
+    public function fetch_item_auction($auctionID)
+    {
+        $query = $this->dbconnection->prepare(
+            "SELECT i.itemID, i.sellerID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime, COUNT(b.bidID) AS bidsNumber
+            FROM items as i, bids as b, auctions as a
+            WHERE i.itemID = a.itemID
+            AND a.auctionID = b.auctionID
+            AND a.auctionID = ?
+            GROUP BY i.itemID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime"
+        );
+        $query->execute(array($auctionID));
+        return $query->fetch();
+    }
+
+    public function fetch_item_categories($itemID)
+    {
+        $query = $this->dbconnection->prepare(
+            "SELECT c.categoryName FROM categories as c, itemCategories as ic
+             WHERE c.categoryID = ic.categoryID
+             AND ic.itemID = ?"
+        );
+        $query->execute(array($itemID));
+        return $query->fetchall();
+    }
+
+    public function insert_new_bid($userID, $auctionID, $bidAmount, $bidDatetime)
+    {
+        $query = $this->dbconnection->prepare("INSERT INTO bids (userID, auctionID, bidAmount, bidDatetime) VALUES (?, ?, ?, ?)");
+        return $query->execute(array($userID, $auctionID, $bidAmount, $bidDatetime));
+    }
+
     /**
      * Destroy the database connection when the object is no longer required
      *
