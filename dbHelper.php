@@ -75,7 +75,8 @@ class DBHelper
                 WHERE b.userID = ?
                 AND b.auctionID = ?
                 AND i.itemID = a.itemID
-                AND a.auctionID = b.auctionID"
+                AND a.auctionID = b.auctionID
+                GROUP BY itemName, description, yourBiddt, endDatetime"
             );
             $query->execute(array($this->userID, $auctionID));
             return $query->fetch();
