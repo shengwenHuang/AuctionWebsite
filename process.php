@@ -1,6 +1,7 @@
 <?php 
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
+  session_start();
   $userID = $_SESSION["userID"];
   
   function message_and_move($message, $movetopage) {
@@ -242,7 +243,46 @@
         message_and_move("Error inserting new listing.", "newListings.php");
       }
     }
-} else {// The HTTP header does not reference a recognised button, so return an error to the index page.
-    message_and_move("Something went wrong processing the data", "index.php");
- }
+} elseif (isset($_POST["new-bid-made"])) {
+  // Get all of the variables that will be needed from POST, SESSION and using an SQL query
+    
+  // TODO: When we have the session setup, use it here to get userID, for now use POST
+  // $userID = $_SESSION["userID"];
+  $auctionID = $_POST["bid-auctionID"];
+  $bidStartAmount = $_POST["bid-startAmount"];
+  $bidAmount = $_POST["bid-amount"]*100;
+  $highestBid = $dbHelper->fetch_max_bid_for_auction($auctionID)["highestBid"];
+  
+  // Check that the bid is not empty, that it is greater than 0 and that it is greater than the current highest bid
+  if (isset($bidAmount) && !empty($bidAmount) && $bidAmount > 0 && $bidAmount > $bidStartAmount && $bidAmount > $highestBid) {
+    // Get the current datetime
+    $bidDatetime = date("Y-m-d H:i:s");
+    // Try to add the new bid to the table
+    try {
+      $result = $dbHelper->insert_new_bid($userID, $auctionID, $bidAmount, $bidDatetime);
+    } catch (PDOException $e) {
+      $message = "Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode();
+      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      exit();
+    }
+    // If the execution of the statement returned true, the insertion was successful. Otherwise, return to the auction page and raise an error.
+    if ($result) {
+      $message = "Bid was made successfully";
+      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      exit();
+    } else {
+      $message = "Error adding new bid, bid was not added";
+      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      exit();
+    }
+  } else {
+    // The bid was invalid, so return to the item page and indicate this
+    $message = "Please enter a valid bid amount";
+    header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    exit();
+  }
+} else {
+  // The HTTP header does not reference a recognised button, so return an error to the index page.
+  message_and_move("Something went wrong processing the data", "index.php");
+}
 ?>
