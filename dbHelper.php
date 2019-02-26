@@ -85,7 +85,7 @@ class DBHelper
     public function fetch_max_bid_for_auction($auctionID)
     {
         // Create a query to retrieve the bid details of the highest overall bid for a given auction
-        $query = $this->dbconnection->prepare("SELECT MAX(bidAmount) AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?");
+        $query = $this->dbconnection->prepare("SELECT MAX(bidAmount) AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ? GROUP BY highestBiddt");
         $query->execute(array($auctionID));
         return $query->fetch();
     }
