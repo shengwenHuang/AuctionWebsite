@@ -221,7 +221,7 @@
     } else {
       // If the result from the query is empty, the username is valid, so add the new user details to the database.
       try {
-          $result = $dbHelper->insert_item($itemname,$sellerID, $item_detail);
+          $result = $dbHelper->fetch_item_auction($itemname,$sellerID, $item_detail);
       } catch (PDOException $e) {
         message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "newListings.php");
       }
