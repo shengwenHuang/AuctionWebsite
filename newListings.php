@@ -1,4 +1,5 @@
 <?php
+  include "header.php";
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
 ?>
