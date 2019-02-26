@@ -213,10 +213,9 @@
      // Hash password
     $password = password_hash($password, PASSWORD_DEFAULT);
     
-} elseif (isset($_POST["save-listing"])) {
+} elseif (isset($_POST["save-auction"])) {
     // Check if the submit-register button is set in the HTTP header. If it is, retrieve the user data.
-    $username = trim($_POST["username"]);
-    $password = $_POST["password"];
+
     $itemname = $_POST["itemname"];
     $item_detail = $_POST["item-detail"];
     $item_category = $_POST["item-category"];
@@ -244,6 +243,6 @@
       }
     }
 } else {// The HTTP header does not reference a recognised button, so return an error to the index page.
-    message_and_move("Something went wrong processing the data");
+    message_and_move("Something went wrong processing the data", "index.php");
  }
 ?>
