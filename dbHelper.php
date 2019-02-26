@@ -216,10 +216,50 @@ class DBHelper
         $query->execute(array($email, $username));
     }
     
-     public  function change_password($password, $username){
+    public  function change_password($password, $username){
         $password = password_hash($password, PASSWORD_DEFAULT);
         $query = $this->dbconnection->prepare("UPDATE users SET password=? WHERE username = ?");
         $query->execute(array($password, $username));
+    }
+
+    public function search_results ($searchQuery, $category){
+        // changes characters used in html to their equivalents, for example: < to &gt;
+        $searchQuery = htmlspecialchars($searchQuery);
+
+        // $searchQuery = mysql_real_escape_string($searchQuery);
+        $searchQuery = "%{$searchQuery}%";
+        if ($category == "Category") {
+            $query = $this->dbconnection->prepare(
+                "SELECT itemName, endDateTime
+                FROM items, auctions
+                WHERE itemName LIKE CONCAT('%',?,'%')
+                AND items.itemID = auctions.itemID
+                AND endDateTime >=  NOW()
+                ORDER BY endDateTime DESC"
+            );
+            $query->execute(array($searchQuery));
+        }
+        else {
+            $query = $this->dbconnection->prepare(
+                "SELECT distinct itemName, endDateTime
+                FROM items, auctions, itemCategories, categories
+                WHERE itemName LIKE CONCAT('%',?,'%')
+                AND items.itemID = auctions.itemID
+                AND items.itemID = itemCategories.itemID
+                AND itemCategories.itemID = categories.categoryID
+                and categories.categoryName = ?
+                AND endDateTime >=  NOW()
+                ORDER BY endDateTime DESC"
+            );
+            $query->execute(array($searchQuery, $category));
+        }
+        
+        // $query->bind_param("s", $searchQuery);
+        // return $query;
+        // $query->execute();
+        
+        return $query->fetchall();
+        // return $query;
     }
 
     /**
