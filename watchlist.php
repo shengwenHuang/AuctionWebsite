@@ -10,33 +10,40 @@
 
 <body>
     <?php
-        /*- [ ]  Table with Item (href), Highest bid, Auction end date
-        - [ ]  Navigation to get back to home page*/
-        $result = $dbHelper -> fetch_watch_list($userID);
-        if ($result) {
+        $watchListInfo = $dbHelper -> fetch_watch_list($userID);
+        if ($watchListInfo) {
+            // Get the highest bid for each auction being watched
+            for ($i = 0; $i < count($watchListInfo); $i++) {
+                $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($watchListInfo[$i]["auctionID"]);
+                $watchListInfo[$i] = array_merge($watchListInfo[$i], $highestBidInfo);
+            }
+
             echo '<table border="0" cellspacing="10" cellpadding="2">
             <tr>
                 <td> <font face="Arial">Item Name</font> </td>
                 <td> <font face="Arial">Item Description</font> </td>
-                <td> <font face="Arial">Your Bid</font> </td>
+                <td> <font face="Arial">Start Price</font> </td>
+                <td> <font face="Arial">Reserve Price</font> </td>
+                <td> <font face="Arial">Start Datetime</font> </td>
+                <td> <font face="Arial">End Datetime</font> </td>
                 <td> <font face="Arial">Highest Bid</font> </td>
-                <td> <font face="Arial">End Date</font> </td>
             </tr>';
-            foreach ($result as $row) {
+
+            foreach ($watchListInfo as $row) {
                 echo '<tr>
-                <td>'.$row["itemName"].'</td>
-                <td>'.$row["description"].'</td>
-                <td>'.$row["bidAmount"].'</td>
-                <td>'.$row["highestBid"].'</td>
-                <td>'.$row["endDatetime"].'</td>
+                <td>' . $row["itemName"] . '</td>
+                <td>' . $row["description"] . '</td>
+                <td>£' . number_format($row["startPrice"]/100, 2) . '</td>
+                <td>£' . number_format($row["reservePrice"]/100, 2) . '</td>
+                <td>' . $row["startDatetime"] . '</td>
+                <td>' . $row["endDatetime"] . '</td>
+                <td>£' . number_format($row["highestBid"]/100, 2) . '</td>
                 </tr>';
             }
         }
         else {
-            echo '<h1>No sale history</h1>';
+            echo '<h1>No items are being watched</h1>';
         }
-        
-        $result->free();
     ?>
 </body>
 

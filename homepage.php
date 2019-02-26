@@ -1,6 +1,7 @@
 <?php 
   include "redirectIfNotLoggedIn.php";
-  include "database.php";
+  require "dbHelper.php";
+  $dbHelper = new DBHelper(null);
   include "header.php";
 ?>
 
@@ -15,15 +16,14 @@
 
 <body>
   <div id="body-content">
-    <header>
       <?php if (isset($_GET['message'])): ?>
-      <?php echo $_SESSION["username"]; ?>
         <div class="error">
           <h1><?php echo $_GET['message']; ?></h1>
         </div>
       <?php endif;?>
-    </header>
   </div>
+
+  <h1>My Homepage</h1>
 </body>
 
 </html>

@@ -31,8 +31,6 @@
         else {
             echo '<h1>No listings</h1>';
         }
-        
-        $result->free();
     ?>
 </body>
 

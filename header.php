@@ -66,13 +66,13 @@
     <button onclick="myFunction()" class="dropbtn">My EbayLite</button>
     <div id="myDropdown" class="dropdown-content">
       <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-      <a href="./index.php">Home page</a>
-      <a href="./myBids.php">My bids</a>
-      <a href="./watchlist.php">My watchlist</a>
-      <a href="./purchaseHistory.php">Purchase history</a>
-      <a href="./yourListings.php">My listings</a>
-      <a href="./salesHistory.php">Sales history</a>
-      <a href="./updateAccount.php">Update account info</a>
+      <a href="homepage.php">Home page</a>
+      <a href="myBids.php">My bids</a>
+      <a href="watchlist.php">My watchlist</a>
+      <a href="purchaseHistory.php">Purchase history</a>
+      <a href="yourListings.php">My listings</a>
+      <a href="salesHistory.php">Sales history</a>
+      <a href="updateAccount.php">Update account info</a>
     </div>
   </div>
 

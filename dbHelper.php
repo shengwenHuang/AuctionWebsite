@@ -94,10 +94,10 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT i.itemName, i.description, a.highestBid as amountPaid, a.endDatetime as purchaseDate, i.sellerID
+                "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as purchaseDate, i.sellerID
                 FROM items as i, auctions as a, purchaseHistory as p
-                WHERE i.itemID = a.itemID
-                AND a.auctionID = p.auctionID
+                WHERE p.auctionID = a.auctionID
+                AND a.itemID = i.itemID
                 AND a.endDatetime < now()
                 AND p.buyerID = ?"
             );
@@ -110,10 +110,10 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT i.itemName, i.description, a.highestBid, a.endDatetime, p.buyerID
+                "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as saleDate, p.buyerID
                 FROM items as i, auctions as a, purchaseHistory as p
-                WHERE i.itemID = a.itemID
-                AND a.auctionID = p.auctionID
+                WHERE p.auctionID = a.auctionID
+                AND a.itemID = i.itemID
                 AND a.endDatetime < now()
                 AND i.sellerID = ?"
             );
@@ -152,11 +152,11 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT i.itemName, i.description, b.bidAmount, a.highestBid, a.endDatetime
-                FROM items as i, bids as b, auctions as a
-                WHERE i.itemID = a.itemID
-                AND a.auctionID = b.auctionID
-                AND b.userID = ?"
+                "SELECT a.auctionID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
+                FROM watchList as wl, items as i, auctions as a
+                WHERE wl.auctionID = a.auctionID
+                AND a.itemID = i.itemID
+                AND wl.userID = ?"
             );
             $query->execute(array($this->userID));
             return $query->fetchall();
