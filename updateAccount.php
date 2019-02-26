@@ -1,10 +1,9 @@
 <?php 
-    include "redirectIfNotLoggedIn.php";
+    require "redirectIfNotLoggedIn.php";
     include "database.php";
     include "header.php";
     require "dbHelper.php";
     $dbHelper = new DBHelper($userID);
-    session_start();
 ?>
 
 <!doctype html>

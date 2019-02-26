@@ -1,5 +1,5 @@
 <?php 
-    include "redirectIfNotLoggedIn.php";
+    require "redirectIfNotLoggedIn.php";
     include "header.php";
     require "dbHelper.php";
     $userID = 9; // Need to change this to variable passed between pages

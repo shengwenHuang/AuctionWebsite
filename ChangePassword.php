@@ -1,4 +1,5 @@
 <?php
+  require "redirectIfNotLoggedIn.php";
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
 ?>

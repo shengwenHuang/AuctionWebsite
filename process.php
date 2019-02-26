@@ -2,6 +2,7 @@
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
   session_start();
+  $userID = $_SESSION["userID"];
   
   function message_and_move($message, $movetopage) {
     header("Location: " . $movetopage . "?message=" . urlencode($message));

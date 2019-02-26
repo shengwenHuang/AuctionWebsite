@@ -1,5 +1,5 @@
 <?php 
-  include "redirectIfNotLoggedIn.php";
+  require "redirectIfNotLoggedIn.php";
   include "database.php";
   include "header.php";
   include "dbHelper.php";

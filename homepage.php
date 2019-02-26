@@ -1,5 +1,5 @@
 <?php 
-  include "redirectIfNotLoggedIn.php";
+  require "redirectIfNotLoggedIn.php";
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
   include "header.php";

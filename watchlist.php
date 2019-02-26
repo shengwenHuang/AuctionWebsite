@@ -1,4 +1,5 @@
 <?php 
+    require "redirectIfNotLoggedIn.php";
     include "header.php";
     require "dbHelper.php";
     $userID = 2;
