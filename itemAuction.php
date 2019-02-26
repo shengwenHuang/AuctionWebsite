@@ -1,9 +1,9 @@
 <?php
-  // require "redirectIfNotLoggedIn.php";
   include "redirectIfNotLoggedIn.php";
   include "header.php";
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
+  $userID = $_SESSION["userID"];
 
   if (isset($_GET["auctionID"])) {
     $auctionID = $_GET["auctionID"];
@@ -55,10 +55,19 @@
         <div style="display: flex; flex-flow: row; align-items: center">
             <h2 id="highest-bid" style="margin-right: 15px">Current Highest Bid: £<?php echo number_format($max_bid["highestBid"]/100, 2) ?></h2>
             <p id="total-bids" style="margin-right: 25px">(Total Number of Bids: <?php echo $auction_details["bidsNumber"] ?>)</p>
-            <button id="new-bid-btn" type="button" style="height: fit-content; margin-right: 25px">New Bid</button>
+            <?php 
+                $auctionDt = strtotime($auction_details["startDatetime"]);
+                $currentDateObject = date("Y-m-d H:i:s");
+                $currentDt = strtotime($currentDateObject);
+
+                // Only display the new bid button if the auction has not ended and the current user is not the seller
+                if (($currentDt < $auctionDt) && ($userID != $auction_details["sellerID"])) {
+                    echo "<button id='new-bid-btn' type='button' style='height: fit-content; margin-right: 25px'>New Bid</button>";
+                }
+            ?>
         </div>
 
-        <!-- TODO: Hide new bid button if sellerID = current userID -->
+        <!-- TODO: Hide new bid button if sellerID = current userID and if auction is in the past -->
         <div id="new-bid" style="display: none; border: 1px solid black; padding: 10px">
             <p style="margin-top: 0px">Your last highest bid: (php code)!!!!!!</p>
             <form action="process.php" method="POST">
@@ -67,15 +76,15 @@
                     <label style="margin-right: 10px">£</label>
                     <input name="bid-amount" type="number" min="0" step=".01" placeholder="0.00">
                 </div>
-                <div style="text-align: end">
-                    <!-- Empty input fields that are used to pass the auctionID, userID and starting auction amount in the POST request -->
-                    <input name="bid-userID" style="display: none" value="<?php echo $userID ?>">
-                    <input name="bid-auctionID" style="display: none" value="<?php echo $auctionID ?>">
-                    <input name="bid-startAmount" style="display: none" value="<?php echo $auction_details["startPrice"] ?>">
+                    <div style="text-align: end">
+                        <!-- Empty input fields that are used to pass the auctionID, userID and starting auction amount in the POST request -->
+                        <input name="bid-userID" style="display: none" value="<?php echo $userID ?>">
+                        <input name="bid-auctionID" style="display: none" value="<?php echo $auctionID ?>">
+                        <input name="bid-startAmount" style="display: none" value="<?php echo $auction_details["startPrice"]?>">
 
-                    <button id="cancel-bid-btn" type="button" style="margin-right: 10px; background-color: red; color: white;">Cancel</button>
-                    <button id="new-bid-btn" name="new-bid-made" type="submit">Make Bid</button>
-                </div>
+                        <button id="cancel-bid-btn" type="button" style="margin-right: 10px; background-color: red; color: white;">Cancel</button>
+                        <button id="new-bid-btn" name="new-bid-made" type="submit">Make Bid</button>
+                    </div>;
             </form>
         </div>
     </div>

@@ -2,12 +2,16 @@
   require "redirectIfNotLoggedIn.php";
   include "header.php";
   require "dbHelper.php";
-//   $userID = 2;
+  $userID = $_SESSION["userID"];
   $dbHelper = new DBHelper($userID);
 ?>
 
 <!doctype html>
 <html>
+
+<head>
+    <link rel="stylesheet" href="css/table.css">
+</head>
 
 <body>
     <?php        
@@ -19,29 +23,36 @@
                 $salesHistory[$i] = array_merge($salesHistory[$i], $highestBidInfo);
             }
 
-            echo '<table border="0" cellspacing="10" cellpadding="2">
-            <tr>
-                <td> <font face="Arial">Item Name</font> </td>
-                <td> <font face="Arial">Item Description</font> </td>
-                <td> <font face="Arial">Sale Datetime</font> </td>
-                <td> <font face="Arial">Sale Price</font> </td>
-                <td> <font face="Arial">Buyer ID</font> </td>
-            </tr>';
+            // HTML for the table to assign column headers
+            echo "<table cellspacing='2' cellpadding='2'> 
+            <tr> 
+                <th>Item Name</th> 
+                <th>Item Description</th> 
+                <th>Sale Datetime</th> 
+                <th>Sale Price</th> 
+                <th>Buyer ID</th> 
+            </tr>";
 
-            foreach ($salesHistory as $row) {
-                echo '<tr>
-                <td>' . $row["itemName"] . '</td>
-                <td>' . $row["description"] . '</td>
-                <td>' . $row["saleDate"] . '</td>
-                <td>£' . number_format($row["highestBid"]/100, 2) . '</td>
-                <td>' . $row["buyerID"] . '</td>
-                </tr>';
+            // Populate the table with the row data
+            foreach ($salesHistory as $row) {         
+                echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
+                          <td>" . $row["itemName"] . "</td> 
+                          <td>" . $row["description"] . "</td> 
+                          <td>" . $row["saleDate"] . "</td>
+                          <td>£" . number_format($row["highestBid"]/100, 2) . "</td>
+                          <td>" . $row["buyerID"] . "</td>
+                      </tr>";
             }
+
+            // Free up the memory used by the array
+            unset($salesHistory);
         }
         else {
             echo '<h1>No purchase history</h1>';
         }
     ?>
+
+    <script type="text/javascript" src="js/table.js"></script>
 </body>
 
 </html>
