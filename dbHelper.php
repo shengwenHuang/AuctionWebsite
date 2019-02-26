@@ -202,6 +202,25 @@ class DBHelper
         $query->execute();
         return $query->fetchall();
     }
+    
+    public function fetch_user_email_from_username($username){
+        $query = $this->dbconnection->prepare(
+            "SELECT email FROM users WHERE username = ?");
+        $query->execute(array($username));
+        $row = $query->fetch();
+        return $row["email"];
+    }
+    
+    public  function update_email($email, $username){
+        $query = $this->dbconnection->prepare("UPDATE users SET email=? WHERE username = ?");
+        $query->execute(array($email, $username));
+    }
+    
+     public  function change_password($password, $username){
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        $query = $this->dbconnection->prepare("UPDATE users SET password=? WHERE username = ?");
+        $query->execute(array($password, $username));
+    }
 
     /**
      * Destroy the database connection when the object is no longer required
