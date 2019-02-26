@@ -2,12 +2,16 @@
     require "redirectIfNotLoggedIn.php";
     include "header.php";
     require "dbHelper.php";
-    $userID = 2;
+    $userID = $_SESSION["userID"];
     $dbHelper = new DBHelper($userID);
 ?>
 
 <!doctype html>
 <html>
+
+<head>
+    <link rel="stylesheet" href="css/table.css">
+</head>
 
 <body>
     <?php
@@ -19,33 +23,40 @@
                 $watchListInfo[$i] = array_merge($watchListInfo[$i], $highestBidInfo);
             }
 
-            echo '<table border="0" cellspacing="10" cellpadding="2">
-            <tr>
-                <td> <font face="Arial">Item Name</font> </td>
-                <td> <font face="Arial">Item Description</font> </td>
-                <td> <font face="Arial">Start Price</font> </td>
-                <td> <font face="Arial">Reserve Price</font> </td>
-                <td> <font face="Arial">Start Datetime</font> </td>
-                <td> <font face="Arial">End Datetime</font> </td>
-                <td> <font face="Arial">Highest Bid</font> </td>
-            </tr>';
+            // HTML for the table to assign column headers
+            echo "<table cellspacing='2' cellpadding='2'> 
+            <tr> 
+                <th>Item Name</th> 
+                <th>Item Description</th>
+                <th>Start Price</th> 
+                <th>Reserve Price</th> 
+                <th>Start Datetime</th>
+                <th>End Datetime</th> 
+                <th>Highest Bid</th> 
+            </tr>";
 
-            foreach ($watchListInfo as $row) {
-                echo '<tr>
-                <td>' . $row["itemName"] . '</td>
-                <td>' . $row["description"] . '</td>
-                <td>£' . number_format($row["startPrice"]/100, 2) . '</td>
-                <td>£' . number_format($row["reservePrice"]/100, 2) . '</td>
-                <td>' . $row["startDatetime"] . '</td>
-                <td>' . $row["endDatetime"] . '</td>
-                <td>£' . number_format($row["highestBid"]/100, 2) . '</td>
-                </tr>';
+            // Populate the table with the row data
+            foreach ($watchListInfo as $row) {         
+                echo "<tr  class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
+                    <td>" . $row["itemName"] . "</td> 
+                    <td>" . $row["description"] . "</td> 
+                    <td>£" . number_format($row["startPrice"]/100, 2) . "</td>
+                    <td>£" . number_format($row["reservePrice"]/100, 2) . "</td>
+                    <td>" . $row["startDatetime"] . "</td>
+                    <td>" . $row["endDatetime"] . "</td>
+                    <td>£" . number_format($row["highestBid"]/100, 2) . "</td>
+                </tr>";
             }
+
+            // Free up the memory used by the array
+            unset($watchListInfo);
         }
         else {
             echo '<h1>No items are being watched</h1>';
         }
     ?>
+
+    <script type="text/javascript" src="js/table.js"></script>
 </body>
 
 </html>

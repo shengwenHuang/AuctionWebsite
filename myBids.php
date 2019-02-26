@@ -2,12 +2,16 @@
     require "redirectIfNotLoggedIn.php";
     include "header.php";
     require "dbHelper.php";
-    $userID = 9; // Need to change this to variable passed between pages
+    $userID = $_SESSION["userID"];
     $dbHelper = new DBHelper($userID);
 ?>
 
 <!doctype html>
 <html>
+
+<head>
+    <link rel="stylesheet" href="css/table.css">
+</head>
 
 <body>
     <?php
@@ -30,27 +34,28 @@
             for ($i = 0; $i < count($auctionArray); $i++) {
                 $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($auctionArray[$i]["auctionID"]);
                 $rowData[$i] = array_merge($rowData[$i], $highestBidInfo);
+                $rowData[$i] = array_merge($rowData[$i], $auctionArray[$i]);
             }
 
             // HTML for the table to assign column headers
-            echo '<table border="0" cellspacing="2" cellpadding="2"> 
+            echo "<table cellspacing='2' cellpadding='2'> 
             <tr> 
-                <td> <font face="Arial">Item Name</font> </td> 
-                <td> <font face="Arial">Item Description</font> </td> 
-                <td> <font face="Arial">Your Latest Bid</font> </td> 
-                <td> <font face="Arial">Highest Bid</font> </td> 
-                <td> <font face="Arial">End Date</font> </td> 
-            </tr>';
+                <th>Item Name</th> 
+                <th>Item Description</th> 
+                <th>Your Latest Bid</th> 
+                <th>Highest Bid</th> 
+                <th>End Date</th> 
+            </tr>";
 
             // Populate the table with the row data
             foreach ($rowData as $row) {         
-                echo '<tr> 
-                          <td>'.$row["itemName"].'</td> 
-                          <td>'.$row["description"].'</td> 
-                          <td>'.$row["yourBid"] . " " . $row["yourBiddt"].'</td> 
-                          <td>'.$row["highestBid"] . " " . $row["highestBiddt"].'</td> 
-                          <td>'.$row["endDatetime"].'</td> 
-                      </tr>';
+                echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
+                          <td>" . $row["itemName"] . "</td> 
+                          <td>" . $row["description"] . "</td> 
+                          <td>£" . number_format($row["yourBid"], 2) . " (" . $row["yourBiddt"] . ")</td> 
+                          <td>£" . number_format($row["highestBid"], 2) . " (" . $row["highestBiddt"] . ")</td> 
+                          <td>" . $row["endDatetime"] . "</td>
+                      </tr>";
             }
 
             // Free up the memory used by the array
@@ -60,6 +65,8 @@
             echo '<h1>No bids made</h1>';
         }   
     ?>
+
+    <script type="text/javascript" src="js/table.js"></script>
 </body>
 
 </html>
