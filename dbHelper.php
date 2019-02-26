@@ -250,7 +250,7 @@ class DBHelper
         $searchQuery = "%{$searchQuery}%";
         if ($category == "Category") {
             $query = $this->dbconnection->prepare(
-                "SELECT itemName, endDateTime
+                "SELECT itemName, endDateTime, auctionID
                 FROM items, auctions
                 WHERE itemName LIKE CONCAT('%',?,'%')
                 AND items.itemID = auctions.itemID
@@ -261,7 +261,7 @@ class DBHelper
         }
         else {
             $query = $this->dbconnection->prepare(
-                "SELECT distinct itemName, endDateTime
+                "SELECT distinct itemName, endDateTime, auctionID
                 FROM items, auctions, itemCategories, categories
                 WHERE itemName LIKE CONCAT('%',?,'%')
                 AND items.itemID = auctions.itemID
