@@ -17,7 +17,7 @@
     $query = $_GET['query']; 
     $catagory = $_GET['choices'];
 
-    // minimum length of query
+    // minimum length of query 
     $min_length = 3;
      
     if(strlen($query) >= $min_length){ // if query length is more or equal minimum length then
@@ -26,7 +26,7 @@
         $printedResults = FALSE;
         if ($raw_results) { 
             foreach ($raw_results as $row) {
-                echo "<p><h3>".$row['itemName']."</h3>".$row['endDateTime']."</p>";
+                echo "<p><h3>" . "<a href=itemAuction.php?auctionID=" . $row['auctionID'] . ">" .$row['itemName']. "</a>" . "</h3>".$row['endDateTime']."</p>";
                 $printedResults = TRUE;
             }
              
