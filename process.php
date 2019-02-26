@@ -243,36 +243,6 @@
         message_and_move("Error inserting new listing.", "newListings.php");
       }
     }
-} elseif (isset($_POST["save-auction"])) {
-    // Check if the submit-register button is set in the HTTP header. If it is, retrieve the user data.
-    $username = trim($_POST["username"]);
-    $password = $_POST["password"];
-    $itemname = $_POST["itemname"];
-    $item_detail = $_POST["item-detail"];
-    $item_category = $_POST["item-category"];
-    $start_price = $_POST["start-price"];
-    $reserve_price = $_POST["reserve-price"];
-    
-    // Check that each field is not empty. If they are, return an error message to the newListings page. 
-    // If all fields are filled, return any validation messages to user
-    if (!isset($itemname) || empty($itemname) || !isset($item_detail) || empty($item_detail) || 
-      !isset($item_category) || empty($item_category) || !isset($start_price) || empty($start_price) ||
-      !isset($reserve_price) || empty($reserve_price)) {
-        message_and_move("Please ensure all fields have been completed", "newListings.php");
-    } else {
-      // If the result from the query is empty, the username is valid, so add the new user details to the database.
-      try {
-        $result = $dbHelper->insert_item($username, $password, $email);
-      } catch (PDOException $e) {
-        message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "newListings.php");
-      }
-      // If the execution of the statement returned true, the insertion was successful. Otherwise, raise an error.
-      if ($result) {
-        message_and_move("Success! New listing created.", "newListings.php");
-      } else {
-        message_and_move("Error inserting new listing.", "newListings.php");
-      }
-    }
 } else {// The HTTP header does not reference a recognised button, so return an error to the index page.
     message_and_move("Something went wrong processing the data");
  }
