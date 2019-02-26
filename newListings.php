@@ -21,15 +21,6 @@
         <input type="text" id="itemname" name="itemname" placeholder="Item" /><br />
         <input type="text" id="item-detail" name="item-detail" placeholder="Tell us about this item" /><br />
         <input type="text" id="item-category" name="item-category" placeholder="category" /><br />
-      </form>
-      <?php if (isset($_GET['message'])): ?>
-      <div class="error">
-        <?php echo $_GET['message']; ?>
-      </div>
-      <?php endif;?>
-    </div>
-    <div id="create-auction">
-      <form method="post" action=process.php>
         <input type="number" id="start-price" name="start-price" placeholder="Start price" /><br />
         <input type="number" id="reserve-price" name="reserve-price" placeholder="Reserve price" /><br />
         <input type="text" id="start-datetime" name="start-datetime" placeholder="Auction start date" /><br />
