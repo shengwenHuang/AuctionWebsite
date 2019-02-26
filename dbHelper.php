@@ -221,6 +221,26 @@ class DBHelper
         $query = $this->dbconnection->prepare("UPDATE users SET password=? WHERE username = ?");
         $query->execute(array($password, $username));
     }
+    
+    public function fetch_itemid_from_items($itemName,$sellerID){
+        $query = $this->dbconnection->prepare(
+            "SELECT itemID FROM items WHERE itemName = ? AND sellerID = ?");
+        $query->execute(array($itemName,$sellerID));
+        $row = $query->fetch();
+        return $row["itemID"];
+    }
+    
+    public function insert_item($itemName,$sellerID, $description)
+    {
+        $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID,description) VALUES ( ?, ?, ?)");
+        return $query->execute(array($itemName,$sellerID, $description));
+    }
+    
+    public function insert_auction($itemID,$startPrice, $reservePrice,$StartDate,$EndDate)
+    {
+        $query = $this->dbconnection->prepare("INSERT INTO auctions (itemID,startPrice,reservePrice,StartDatetime,endDatetime) VALUES ( ?, ?, ?, ?, ?)");
+        return $query->execute(array($itemID,$startPrice, $reservePrice,$StartDate,$EndDate));
+    }
 
     public function search_results ($searchQuery, $category){
         // changes characters used in html to their equivalents, for example: < to &gt;
