@@ -126,12 +126,12 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
+                "SELECT a.auctionID, i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
                 FROM items as i, bids as b, auctions as a
                 WHERE i.itemID = a.itemID
                 AND a.auctionID = b.auctionID
                 AND i.sellerID = ?
-                GROUP BY i.itemName, i.description, a.endDatetime"
+                GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
             );
             $query->execute(array($this->userID));
             return $query->fetchall();
