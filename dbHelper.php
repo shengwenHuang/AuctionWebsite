@@ -90,6 +90,7 @@ class DBHelper
         return $query->fetch();
     }
 
+    // TODO: WE NEED TO GET THE PURCHASE HISTORY TABLE FROM THE MAX BIDS FOR EACH AUCTION??
     public function fetch_purchase_history()
     {
         if (isset($this->userID)) {
@@ -130,6 +131,7 @@ class DBHelper
                 FROM items as i, bids as b, auctions as a
                 WHERE i.itemID = a.itemID
                 AND a.auctionID = b.auctionID
+                AND a.endDatetime > now()
                 AND i.sellerID = ?
                 GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
             );
@@ -156,6 +158,7 @@ class DBHelper
                 FROM watchList as wl, items as i, auctions as a
                 WHERE wl.auctionID = a.auctionID
                 AND a.itemID = i.itemID
+                AND a.endDatetime > now()
                 AND wl.userID = ?"
             );
             $query->execute(array($this->userID));
