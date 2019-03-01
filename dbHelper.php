@@ -234,16 +234,16 @@ class DBHelper
         return $row["itemID"];
     }
     
-    public function insert_item($itemName,$sellerID, $description)
+    public function insert_item($itemName, $sellerID, $description)
     {
-        $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID,description) VALUES ( ?, ?, ?)");
+        $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID, description) VALUES ( ?, ?, ?)");
         return $query->execute(array($itemName,$sellerID, $description));
     }
     
-    public function insert_auction($itemID,$startPrice, $reservePrice,$StartDate,$EndDate)
+    public function insert_auction($itemID, $start_price, $reserve_price, $startDatetime, $endDatetime)
     {
-        $query = $this->dbconnection->prepare("INSERT INTO auctions (itemID,startPrice,reservePrice,StartDatetime,endDatetime) VALUES ( ?, ?, ?, ?, ?)");
-        return $query->execute(array($itemID,$startPrice, $reservePrice,$StartDate,$EndDate));
+        $query = $this->dbconnection->prepare("INSERT INTO auctions (itemID,startPrice,reservePrice,startDatetime,endDatetime) VALUES ( ?, ?, ?, ?, ?)");
+        return $query->execute(array($itemID, $start_price * 100, $reserve_price * 100, $startDatetime, $endDatetime));
     }
 
     public function search_results ($searchQuery, $category){
