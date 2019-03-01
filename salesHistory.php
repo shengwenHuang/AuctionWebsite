@@ -48,7 +48,7 @@
             unset($salesHistory);
         }
         else {
-            echo '<h1>No purchase history</h1>';
+            echo '<h1>No sales history</h1>';
         }
     ?>
 
