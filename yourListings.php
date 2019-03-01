@@ -15,7 +15,7 @@
 
 <body>
     <form action="newListings.php" method="POST">
-        <button>Add New Listing</button>
+        <button style="font-size: 1.25em; padding: 10px; margin: 10px">Add New Listing</button>
     </form>
 
     <?php
