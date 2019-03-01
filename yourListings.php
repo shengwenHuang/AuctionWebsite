@@ -14,6 +14,10 @@
 </head>
 
 <body>
+    <form action="newListings.php" method="POST">
+        <button>Add New Listing</button>
+    </form>
+
     <?php
         $yourListings = $dbHelper -> fetch_your_listing($userID);
         if ($yourListings) {
