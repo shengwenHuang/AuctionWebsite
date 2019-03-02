@@ -1,8 +1,10 @@
 <?php 
-    require "redirectIfNotLoggedIn.php";
-    include "header.php";
-    require "dbHelper.php";
-    $dbHelper = new DBHelper($userID);
+  define("accessChecker", TRUE);
+  
+  require "redirectIfNotLoggedIn.php";  
+  require "dbHelper.php";
+  $dbHelper = new DBHelper(null);  
+  require "header.php";
 ?>
 
 <!doctype html>

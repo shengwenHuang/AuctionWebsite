@@ -1,8 +1,10 @@
-<?php 
-  require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
+<?php
+  define("accessChecker", TRUE);
+
   session_start();
   $userID = $_SESSION["userID"];
+  require "dbHelper.php";
+  $dbHelper = new DBHelper($userID);
   
   function message_and_move($message, $movetopage) {
     header("Location: " . $movetopage . "?message=" . urlencode($message));
@@ -44,7 +46,7 @@
           $_SESSION["username"] = "$username";
           $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
           // echo "<p>" . $_SESSION['userID'] . "hello </p>";
-          message_and_move("Successfully logged in to your account! " . $_SESSION["username"], "homepage.php");
+          message_and_move("Successfully logged in to your account!", "homepage.php");
           
         } else {
           message_and_move("Incorrect password provided, please try again", "index.php");
@@ -247,9 +249,6 @@
     }
 } elseif (isset($_POST["new-bid-made"])) {
   // Get all of the variables that will be needed from POST, SESSION and using an SQL query
-    
-  // TODO: When we have the session setup, use it here to get userID, for now use POST
-  // $userID = $_SESSION["userID"];
   $auctionID = $_POST["bid-auctionID"];
   $bidStartAmount = $_POST["bid-startAmount"];
   $bidAmount = $_POST["bid-amount"]*100;
@@ -261,6 +260,7 @@
     $bidDatetime = date("Y-m-d H:i:s");
     // Try to add the new bid to the table
     try {
+      $dbHelper->sendEmailifOutbid($auctionID);
       $result = $dbHelper->insert_new_bid($userID, $auctionID, $bidAmount, $bidDatetime);
     } catch (PDOException $e) {
       $message = "Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode();
@@ -270,22 +270,44 @@
     
     // If the execution of the statement returned true, the insertion was successful. Otherwise, return to the auction page and raise an error.
     if ($result) {
+      //// add code here
+      // header_remove();
+      // message_and_move("Direct access not permitted, redirected to login", "itemAuction.php");
+// . "&auctionID=" . $auctionID
       $message = "Bid was made successfully";
-      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
+      // header("Location: " . "http://localhost:8888/itemAuction.php" . "?message=" . urlencode($message). "&auctionID=" . $auctionID);
       exit();
     } else {
       $message = "Error adding new bid, bid was not added";
-      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      // header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
       exit();
     }
   } else {
     // The bid was invalid, so return to the item page and indicate this
     $message = "Please enter a valid bid amount";
-    header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    // header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
     exit();
+  }
+} elseif (isset($_POST["search-button"])) {
+  // Get all of the variables that will be needed from POST
+  $query = $_POST["query"];
+  $choices = $_POST["choices"];
+  
+  // If the query string length is more or less than the minimum length, then accept the query
+  if (strlen($query) >= 3) {
+    header("Location: " . "search.php" . "?query=" . urlencode($query) . "&choices=" . urlencode($choices));
+    exit();        
+  } else {
+    // If query length is ltoo short, show an error message on the homepage screen
+    message_and_move("Invalid query string: must be at least 3 characters", "homepage.php");
   }
 } else {
   // The HTTP header does not reference a recognised button, so return an error to the index page.
-  message_and_move("Something went wrong processing the data", "index.php");
+  message_and_move("Direct access not permitted, redirected to login", "index.php");
 }
+
+
 ?>

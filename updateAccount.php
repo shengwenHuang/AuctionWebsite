@@ -1,8 +1,10 @@
-<?php 
-    require "redirectIfNotLoggedIn.php";
-    include "header.php";
-    require "dbHelper.php";
-    $dbHelper = new DBHelper($userID);
+<?php
+  define("accessChecker", TRUE); 
+  
+  require "redirectIfNotLoggedIn.php";  
+  require "dbHelper.php";
+  $dbHelper = new DBHelper(null);
+  require "header.php";
 ?>
 
 <!doctype html>
@@ -27,11 +29,11 @@
   </div>
 
   <?php
-//show username and email address
-$username = $_SESSION["username"];
-$email = $dbHelper->fetch_user_email_from_username($username);
-echo "Username: ",$_SESSION["username"],"<br/>","Email address: ",$email;
-?>
+    //show username and email address
+    $username = $_SESSION["username"];
+    $email = $dbHelper->fetch_user_email_from_username($username);
+    echo "Username: ",$_SESSION["username"],"<br/>","Email address: ",$email;
+  ?>
 
   <!--change password and email address-->
   <form method="post" action="changeEmail.php">

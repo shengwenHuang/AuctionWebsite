@@ -1,9 +1,11 @@
 <?php
-  require "redirectIfNotLoggedIn.php";
-  include "header.php";
-  require "dbHelper.php";
-  $userID = $_SESSION["userID"];
-  $dbHelper = new DBHelper($userID);
+    define("accessChecker", TRUE);
+    
+    require "redirectIfNotLoggedIn.php";
+    require "dbHelper.php";
+    $userID = $_SESSION["userID"];
+    $dbHelper = new DBHelper($userID);
+    require "header.php";
 ?>
 
 <!doctype html>
@@ -19,14 +21,37 @@
     </form>
 
     <?php
-        $yourListings = $dbHelper -> fetch_your_listing($userID);
+        $optionsValueArray = ["itemName", "bidsNumber", "highestBid", "endDatetime"];
+        $optionsTextArray = ["Item Name", "Number of Bids", "Current Highest Bid", "End Date/Time"];
+        require "filterDropDown.php";
+
+        $yourListings = $dbHelper->fetch_your_listing($userID);
         if ($yourListings) {
+            // Get the current highest bid for each listing
+            for ($i = 0; $i < count($yourListings); $i++) {
+                $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($yourListings[$i]["auctionID"]);
+                $yourListings[$i] = array_merge($yourListings[$i], $highestBidInfo);
+            }
+
+            // Sort the resulting rows using a custom sorting function that sorts each row by the selected
+            // key value
+            $key = $_GET["orderBySelect"];
+            usort($rowData, function($row1, $row2) use ($key)
+            {
+                if ($row1[$key] == $row2[$key]) {
+                    return 0;
+                } else {
+                    return ($row1[$key] < $row2[$key]) ? -1 : 1;
+                }
+            });
+
             // HTML for the table to assign column headers
             echo "<table cellspacing='2' cellpadding='2'> 
             <tr> 
                 <th>Item Name</th> 
                 <th>Item Description</th>
-                <th>Bids Number</th> 
+                <th>Bids Number</th>
+                <th>Current Highest Bid</th> 
                 <th>End Date</th>
             </tr>";
             // Populate the table with the row data
@@ -35,6 +60,7 @@
                     <td>" . $row["itemName"] . "</td> 
                     <td>" . $row["description"] . "</td>
                     <td>" . $row["bidsNumber"] . "</td>
+                    <td>" . $row["highestBid"] . "</td>
                     <td>" . $row["endDatetime"] . "</td>
                 </tr>";
             }

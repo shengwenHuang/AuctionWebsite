@@ -1,19 +1,21 @@
 <?php
-  include "redirectIfNotLoggedIn.php";
-  include "header.php";
-  require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
-  $userID = $_SESSION["userID"];
+    define("accessChecker", TRUE);
+    
+    require "redirectIfNotLoggedIn.php";
+    require "dbHelper.php";
+    $dbHelper = new DBHelper(null);
+    require "header.php";
 
-  if (isset($_GET["auctionID"])) {
-    $auctionID = $_GET["auctionID"];
-    $auction_details = $dbHelper->fetch_item_auction($auctionID);
-    $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
-    $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
-  } else {
-      echo "<h1>Error: No auction ID was passed</h1>";
-      die();
-  }
+    $userID = $_SESSION["userID"];
+    if (isset($_GET["auctionID"])) {
+        $auctionID = $_GET["auctionID"];
+        $auction_details = $dbHelper->fetch_item_auction($auctionID);
+        $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
+        $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
+    } else {
+        echo "<h1>Error: No auction ID was passed</h1>";
+        die();
+    }
 ?>
 
 <!doctype html>
@@ -56,10 +58,9 @@
             <h2 id="highest-bid" style="margin-right: 15px">Current Highest Bid: £<?php echo number_format($max_bid["highestBid"]/100, 2) ?></h2>
             <p id="total-bids" style="margin-right: 25px">(Total Number of Bids: <?php echo $auction_details["bidsNumber"] ?>)</p>
             <?php 
-                $auctionDt = strtotime($auction_details["startDatetime"]);
+                $auctionDt = strtotime($auction_details["endDatetime"]);
                 $currentDateObject = date("Y-m-d H:i:s");
                 $currentDt = strtotime($currentDateObject);
-
                 // Only display the new bid button if the auction has not ended and the current user is not the seller
                 if (($currentDt < $auctionDt) && ($userID != $auction_details["sellerID"])) {
                     echo "<button id='new-bid-btn' type='button' style='height: fit-content; margin-right: 25px'>New Bid</button>";
