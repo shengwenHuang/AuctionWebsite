@@ -3,6 +3,7 @@
   $dbHelper = new DBHelper(null);
   session_start();
   $userID = $_SESSION["userID"];
+
   
   function message_and_move($message, $movetopage) {
     header("Location: " . $movetopage . "?message=" . urlencode($message));
@@ -250,6 +251,7 @@
     $bidDatetime = date("Y-m-d H:i:s");
     // Try to add the new bid to the table
     try {
+      $dbHelper->sendEmailifOutbid($auctionID);
       $result = $dbHelper->insert_new_bid($userID, $auctionID, $bidAmount, $bidDatetime);
     } catch (PDOException $e) {
       $message = "Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode();
@@ -258,6 +260,9 @@
     }
     // If the execution of the statement returned true, the insertion was successful. Otherwise, return to the auction page and raise an error.
     if ($result) {
+      //// add code here
+      
+
       $message = "Bid was made successfully";
       header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
       exit();
@@ -276,4 +281,6 @@
   // The HTTP header does not reference a recognised button, so return an error to the index page.
   message_and_move("Something went wrong processing the data", "index.php");
 }
+
+
 ?>
