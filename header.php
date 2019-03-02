@@ -1,3 +1,9 @@
+<?php 
+  if(!defined("accessChecker")) {
+    die("Direct access not permitted");
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -29,11 +35,7 @@
     #myInput:focus {outline: 3px solid #ddd;}
 
     .dropdown {
-      position: relative;
-      float: right;
       padding-right: 10em;
-      padding-top: 0.5em;
-      display: inline-block;
     }
 
     .dropdown-content {
@@ -59,25 +61,27 @@
   </style>
 </head>
 
-<body>
-  <div class="dropdown" , alig>
-    <button onclick="myFunction()" class="dropbtn">My EbayLite</button>
-    <div id="myDropdown" class="dropdown-content">
-      <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
-      <a href="homepage.php" style="font-weight: bold">Home page</a>
-      <a href="myBids.php">My bids</a>
-      <a href="watchlist.php">My watchlist</a>
-      <a href="purchaseHistory.php">Purchase history</a>
-      <a href="yourListings.php">My listings</a>
-      <a href="salesHistory.php">Sales history</a>
-      <a href="updateAccount.php">Update account info</a>
-      <a href="index.php" style="font-weight: bold">Logout</a>
+  <div style="display: flex; align-items: center; justify-content: space-between; background-color: grey; margin-bottom: 15px">
+    <h1 style="color: white; margin-left: 15px">EbayLite</h1>
+    <div class="dropdown">
+      <button onclick="toggleMenu()" class="dropbtn">My EbayLite</button>
+      <div id="myDropdown" class="dropdown-content">
+        <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+        <a href="homepage.php" style="font-weight: bold">Home page</a>
+        <a href="myBids.php">My bids</a>
+        <a href="watchlist.php">My watchlist</a>
+        <a href="purchaseHistory.php">Purchase history</a>
+        <a href="yourListings.php">My listings</a>
+        <a href="salesHistory.php">Sales history</a>
+        <a href="updateAccount.php">Update account info</a>
+        <a href="index.php" style="font-weight: bold">Logout</a>
+      </div>
     </div>
   </div>
 
   <script>
     // When the user clicks on the button, toggle between hiding and showing the dropdown content
-    function myFunction() {
+    function toggleMenu() {
       document.getElementById("myDropdown").classList.toggle("show");
     }
 
@@ -97,6 +101,5 @@
       }
     }
   </script>
-</body>
 
 </html>

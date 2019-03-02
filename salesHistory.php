@@ -1,9 +1,11 @@
 <?php
-  require "redirectIfNotLoggedIn.php";
-  include "header.php";
-  require "dbHelper.php";
-  $userID = $_SESSION["userID"];
-  $dbHelper = new DBHelper($userID);
+    define("accessChecker", TRUE);
+    
+    require "redirectIfNotLoggedIn.php";
+    require "dbHelper.php";
+    $userID = $_SESSION["userID"];
+    $dbHelper = new DBHelper($userID);
+    require "header.php";
 ?>
 
 <!doctype html>
@@ -14,7 +16,11 @@
 </head>
 
 <body>
-    <?php        
+    <?php
+        $optionsValueArray = ["itemName", "saleDate", "highestBid"];
+        $optionsTextArray = ["Item Name", "Sale Date/Time", "Sale Price"];
+        require "filterDropDown.php";
+    
         $salesHistory = $dbHelper -> fetch_sales_history($userID);
         if ($salesHistory) {
             // Get the highest bid for each auction that was won as the final price that was paid
@@ -22,6 +28,18 @@
                 $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($salesHistory[$i]["auctionID"]);
                 $salesHistory[$i] = array_merge($salesHistory[$i], $highestBidInfo);
             }
+
+            // Sort the resulting rows using a custom sorting function that sorts each row by the selected
+            // key value
+            $key = $_GET["orderBySelect"];
+            usort($rowData, function($row1, $row2) use ($key)
+            {
+                if ($row1[$key] == $row2[$key]) {
+                    return 0;
+                } else {
+                    return ($row1[$key] < $row2[$key]) ? -1 : 1;
+                }
+            });
 
             // HTML for the table to assign column headers
             echo "<table cellspacing='2' cellpadding='2'> 

@@ -1,9 +1,11 @@
 <?php 
+    define("accessChecker", TRUE);
+    
     require "redirectIfNotLoggedIn.php";
-    include "header.php";
     require "dbHelper.php";
     $userID = $_SESSION["userID"];
     $dbHelper = new DBHelper($userID);
+    require "header.php";
 ?>
 
 <!doctype html>
@@ -14,43 +16,12 @@
 </head>
 
 <body>
-    <!-- Create a dropdown menu of options to sort the returned list by and select an option as specified in
-     the GET request if it exists. If it doesn't, set the top item as the default selected -->
-    <div style="display: flex; align-items: center; margin-bottom: 15px">
-        <p style="font-size: 1.25em; margin-right: 10px">Order By:</p>
-        <form action="?" method="GET">
-            <select id="orderBySelect" name="orderBySelect" style="font-size: 1.25em">
-            <?php
-                $optionsValueArray = ["itemName", "yourBid", "yourBiddt", "endDatetime"];
-                $optionsTextArray = ["Item Name", "Your Bids Amount", "Your Bids Datetime", "Auction End Datetime"];
-                
-                if (!isset($_GET["orderBySelect"])) {
-                    $_GET["orderBySelect"] = "itemName";
-                }
-
-                for ($i = 0; $i < sizeof($optionsValueArray); $i++) {
-                    if ($_GET["orderBySelect"] == $optionsValueArray[$i]) {
-                        echo "<option value=" . $optionsValueArray[$i] . " selected>" . $optionsTextArray[$i] . "</option>";
-                    } else {
-                        echo "<option value=" . $optionsValueArray[$i] . ">" . $optionsTextArray[$i] . "</option>";
-                    }
-                }
-            ?>
-            </select>
-        </form>
-    </div>
-
-    <script>
-        document.getElementById("orderBySelect").addEventListener("change", function() {
-            console.log("Hello")
-            var selected = event.target.value;
-            var url = location.protocol + '//' + location.host + location.pathname;
-            url += ("?orderBySelect=" + selected);
-            window.location.href = url;
-        });
-    </script>
-
     <?php
+        // Add dropdown for sorting the order of displayed items
+        $optionsValueArray = ["itemName", "yourBid", "yourBiddt", "endDatetime"];
+        $optionsTextArray = ["Item Name", "Your Bids Amount", "Your Bids Datetime", "Auction End Datetime"];
+        require "filterDropDown.php";
+
         // Retrieve a list of distinct auctionIDs that the current user has bid on
         $auctionArray = $dbHelper->fetch_auctions_by_user();
 

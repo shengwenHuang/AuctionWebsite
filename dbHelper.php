@@ -1,4 +1,8 @@
 <?php
+if(!defined("accessChecker")) {
+    die("Direct access not permitted");
+}
+
 class DBHelper
 {
     private $userID;

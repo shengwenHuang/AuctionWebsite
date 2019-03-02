@@ -1,9 +1,11 @@
 <?php 
+    define("accessChecker", TRUE);
+    
     require "redirectIfNotLoggedIn.php";
-    include "header.php";
     require "dbHelper.php";
     $userID = $_SESSION["userID"];
     $dbHelper = new DBHelper($userID);
+    require "header.php";
 ?>
 
 <!doctype html>
@@ -15,6 +17,10 @@
 
 <body>
     <?php
+        $optionsValueArray = ["itemName", "startPrice", "startDatetime", "endDatetime", "highestBid"];
+        $optionsTextArray = ["Item Name", "Start Price", "Start Date/Time", "End Date/Time", "Current Highest Bid"];
+        require "filterDropDown.php";
+
         $watchListInfo = $dbHelper -> fetch_watch_list($userID);
         if ($watchListInfo) {
             // Get the highest bid for each auction being watched
@@ -22,6 +28,18 @@
                 $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($watchListInfo[$i]["auctionID"]);
                 $watchListInfo[$i] = array_merge($watchListInfo[$i], $highestBidInfo);
             }
+
+            // Sort the resulting rows using a custom sorting function that sorts each row by the selected
+            // key value
+            $key = $_GET["orderBySelect"];
+            usort($rowData, function($row1, $row2) use ($key)
+            {
+                if ($row1[$key] == $row2[$key]) {
+                    return 0;
+                } else {
+                    return ($row1[$key] < $row2[$key]) ? -1 : 1;
+                }
+            });
 
             // HTML for the table to assign column headers
             echo "<table cellspacing='2' cellpadding='2'> 

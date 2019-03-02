@@ -1,8 +1,10 @@
-<?php 
-  require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
+<?php
+  define("accessChecker", TRUE);
+
   session_start();
   $userID = $_SESSION["userID"];
+  require "dbHelper.php";
+  $dbHelper = new DBHelper($userID);
   
   function message_and_move($message, $movetopage) {
     header("Location: " . $movetopage . "?message=" . urlencode($message));
@@ -284,6 +286,6 @@
   }
 } else {
   // The HTTP header does not reference a recognised button, so return an error to the index page.
-  message_and_move("Something went wrong processing the data", "index.php");
+  message_and_move("Direct access not permitted, redirected to login", "index.php");
 }
 ?>

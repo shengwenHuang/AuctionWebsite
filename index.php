@@ -1,4 +1,5 @@
 <?php
+  define("accessChecker", TRUE);
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
 ?>

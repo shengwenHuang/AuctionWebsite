@@ -1,8 +1,9 @@
 <?php
-  include "redirectIfNotLoggedIn.php";
+  define("accessChecker", TRUE);
+
+  require "redirectIfNotLoggedIn.php";
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
-  
 ?>
 <!doctype html>
 <html>
