@@ -233,12 +233,14 @@
     } else {
       try {
         $itemID = $dbHelper->insert_item($itemname, $sellerID, $item_detail);
-        $result = $dbHelper->insert_auction($itemID, $start_price, $reserve_price, $startDatetime, $endDatetime);
+        $categoryID = $dbHelper->fetch_categoryid_from_category($item_category);
+        $insert_category_result = $dbHelper->insert_item_category($itemID, $categoryID);
+        $insert_auction_result = $dbHelper->insert_auction($itemID, $start_price, $reserve_price, $startDatetime, $endDatetime);
       } catch (PDOException $e) {
             message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "newListings.php");
       }
       // If the execution of the statement returned true, the insertion was successful. Otherwise, raise an error.
-      if ($result) {
+      if ($insert_category_result && $insert_auction_result) {
           
         message_and_move("Success! New listing created.", "newListings.php");
       } else {
