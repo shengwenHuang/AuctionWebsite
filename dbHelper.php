@@ -376,6 +376,57 @@ class DBHelper
         return $row["categoryID"];
     }
     
+    public function fetch_auctionID_from_bids($userID){
+        $query = $this->dbconnection->prepare(
+            "SELECT auctionID FROM bids WHERE userID = ?");
+        $query->execute(array($userID));
+        $row = $query->fetch();
+        return $row["auctionID"];
+    }
+    
+    public function fetch_itemid_from_auctions($auctionID){
+        $query = $this->dbconnection->prepare(
+            "SELECT itemID FROM auctions WHERE auctionID = ?");
+        $query->execute(array($auctionID));
+        $row = $query->fetch();
+        return $row["itemID"];
+    }
+    
+    public function fetch_favorite_categories($itemID){
+        $query = $this->dbconnection->prepare(
+            "SELECT categoryID FROM itemCategories WHERE itemID = ?");
+        $query->execute(array($itemID));
+        $row = $query->fetch();
+        $array = $row["categoryID"];
+        $values = array_count_values($array);
+        arsort($values);
+        return array_slice(array_keys($values), 0, 1, true);
+    }
+    
+    public function fetch_all_items_from_categoris($categoryID){
+        $query = $this->dbconnection->prepare(
+            "SELECT itemID FROM ItemCategories WHERE categoryID = ?");
+        $query->execute(array($categoryID));
+        $row = $query->fetch();
+        return $row["itemID"];
+    }
+    
+    public function fetch_popular_auctionID($categoryID){
+        $query = $this->dbconnection->prepare(
+            "SELECT bids.auctionID, bids.bidAmount, items.itemName
+            FROM bids, auctions, items, itemCategories
+            WHERE bids.auctionID = auctions.auctionID
+            AND auctions.itemID = items.itemID
+            AND items.itemID = itemCategories.itemID
+            AND itemCategories.categoryID = ?");
+        $query->execute(array($categoryID));
+        $row = $query->fetch();
+        $array =  $row["itemName"];
+        $values = array_count_values($array);
+        arsort($values);
+        return array_slice(array_keys($values), 0, 5, true);
+    }
+    
     public function insert_item($itemName, $sellerID, $description)
     {
         $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID, description) VALUES (?, ?, ?)");

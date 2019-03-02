@@ -225,7 +225,7 @@
       !isset($reserve_price) || empty($reserve_price) || !isset($day) || empty($day) || 
       !isset($month) || empty($month) || !isset($year) || empty($year)||
       !isset($time) || empty($time)) {
-        message_and_move("Please ensure all fields have been completed", "newListings.php");
+        message_and_move("Please ensure all fields have been completed.", "newListings.php");
     } elseif ($endDatetime < $startDatetime) {
         message_and_move("The end date should not be earlier than today.", "newListings.php");
     } elseif ($start_price > $reserve_price) {
