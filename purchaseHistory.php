@@ -23,6 +23,7 @@
         require "filterDropDown.php";
 
         $purchaseHistory = $dbHelper -> fetch_purchase_history($userID);
+
         if ($purchaseHistory) {
             // Get the highest bid for each auction that was won as the final price that was paid
             for ($i = 0; $i < count($purchaseHistory); $i++) {

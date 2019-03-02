@@ -33,12 +33,17 @@
             // and save each output row to the rowData array
             foreach ($auctionArray as $auction) {
                 $returnedRow = $dbHelper->fetch_listing_by_user_auction($auction["auctionID"]);
-                array_push($rowData, $returnedRow);
+                if ($returnedRow) {
+                    // echo "hello";
+                    // echo print_r($returnedRow);
+                    array_push($rowData, $returnedRow);
+                }
+                
             }
-
+            
             // Retrieve the current maximum bid for each given auction and append this to the corresponding row in
             // the rowData array
-            for ($i = 0; $i < count($auctionArray); $i++) {
+            for ($i = 0; $i < count($rowData); $i++) {
                 $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($auctionArray[$i]["auctionID"]);
                 $rowData[$i] = array_merge($rowData[$i], $highestBidInfo);
                 $rowData[$i] = array_merge($rowData[$i], $auctionArray[$i]);
