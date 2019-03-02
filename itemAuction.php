@@ -11,7 +11,6 @@
         $auctionID = $_GET["auctionID"];
         $auction_details = $dbHelper->fetch_item_auction($auctionID);
         $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
-        echo "<p>AuctionID:" . $auctionID . "</p>";
         $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
     } else {
         echo "<h1>Error: No auction ID was passed</h1>";
@@ -62,11 +61,6 @@
                 $auctionDt = strtotime($auction_details["endDatetime"]);
                 $currentDateObject = date("Y-m-d H:i:s");
                 $currentDt = strtotime($currentDateObject);
-                echo '<p>auction date:' . $auctionDt . '</p>';
-                echo '<p>auction date:' . $auctionDt . '</p>';
-                echo '<p>current date:' . $currentDt . '</p>';
-                echo '<p>userID:' . $userID. '</p>';
-                echo '<p>sellerID:' .$auction_details["sellerID"]. '</p>';
                 // Only display the new bid button if the auction has not ended and the current user is not the seller
                 if (($currentDt < $auctionDt) && ($userID != $auction_details["sellerID"])) {
                     echo "<button id='new-bid-btn' type='button' style='height: fit-content; margin-right: 25px'>New Bid</button>";
