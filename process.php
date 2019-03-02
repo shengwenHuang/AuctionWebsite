@@ -275,20 +275,20 @@
       // message_and_move("Direct access not permitted, redirected to login", "itemAuction.php");
 // . "&auctionID=" . $auctionID
       $message = "Bid was made successfully";
-      echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
+      echo '<script type="text/javascript">window.location = "itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
       // header("Location: " . "http://localhost:8888/itemAuction.php" . "?message=" . urlencode($message). "&auctionID=" . $auctionID);
       exit();
     } else {
       $message = "Error adding new bid, bid was not added";
       // header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
-      echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
+      echo '<script type="text/javascript">window.location = "itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
       exit();
     }
   } else {
     // The bid was invalid, so return to the item page and indicate this
     $message = "Please enter a valid bid amount";
     // header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
-    echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
+    echo '<script type="text/javascript">window.location = "itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
     exit();
   }
 } elseif (isset($_POST["search-button"])) {
