@@ -237,7 +237,14 @@ class DBHelper
     public function insert_item($itemName, $sellerID, $description)
     {
         $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID, description) VALUES ( ?, ?, ?)");
-        return $query->execute(array($itemName,$sellerID, $description));
+        $result = $query->execute(array($itemName,$sellerID, $description));
+        if ($result) { // if the insert succed, the return the itmeID
+            return $this->dbconnection->lastInsertId();
+        }
+        else { // if the insert failed, return null and insert_auction will throw an error
+            return; 
+        }
+        
     }
     
     public function insert_auction($itemID, $start_price, $reserve_price, $startDatetime, $endDatetime)
