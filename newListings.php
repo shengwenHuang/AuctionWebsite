@@ -37,7 +37,7 @@
                     foreach ($result as $row) {
                         echo '<option>'.$row["categoryName"].'</option>';
                     }
-                }
+                  }
                   ?>
                 </select>
                 </div>

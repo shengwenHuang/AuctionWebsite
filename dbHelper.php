@@ -79,14 +79,25 @@ class DBHelper
     {
         if (isset($this->userID)) {
             // Create a query to retrieve item, bid and auction details for the maximum bid made by the user in a given auction
+            // old query
+            // "SELECT i.itemName, i.description, MAX(b.bidAmount) AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
+                // FROM items AS i, auctions AS a, bids AS b
+                // WHERE b.userID = ?
+                // AND b.auctionID = ?
+                // AND i.itemID = a.itemID
+                // AND a.auctionID = b.auctionID
+                // GROUP BY itemName, description, yourBiddt, endDatetime"
+            
+            
             $query = $this->dbconnection->prepare(
-                "SELECT i.itemName, i.description, MAX(b.bidAmount) AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
+                
+                "SELECT i.itemName, i.description, b.bidAmount AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
                 FROM items AS i, auctions AS a, bids AS b
                 WHERE b.userID = ?
                 AND b.auctionID = ?
                 AND i.itemID = a.itemID
                 AND a.auctionID = b.auctionID
-                GROUP BY itemName, description, yourBiddt, endDatetime"
+                ORDER BY yourBid DESC"
             );
             $query->execute(array($this->userID, $auctionID));
             return $query->fetch();
@@ -96,11 +107,18 @@ class DBHelper
     public function fetch_max_bid_for_auction($auctionID)
     {
         // Create a query to retrieve the bid details of the highest overall bid for a given auction
-        $query = $this->dbconnection->prepare("SELECT bidAmount AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?
-        ORDER BY highestBid DESC
-        LIMIT 1");
+        $query = $this->dbconnection->prepare(
+            "SELECT bidAmount AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?
+            ORDER BY highestBid DESC
+            LIMIT 1"
+        );
         $query->execute(array($auctionID));
-        return $query->fetch();
+        $rows = $query->fetch();
+        if (!isset($rows["highestBid"])) {
+            $rows["highestBid"] = 0;
+        }
+        $rows["highestBid"] = $rows["highestBid"];
+        return $rows;
     }
 
     // TODO: WE NEED TO GET THE PURCHASE HISTORY TABLE FROM THE MAX BIDS FOR EACH AUCTION??

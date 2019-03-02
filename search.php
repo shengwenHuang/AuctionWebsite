@@ -18,6 +18,10 @@
 <body>
     <h1 style="margin-bottom: 20px">Search Results</h1>
     <?php
+        $optionsValueArray = ["itemName", "bidsNumber", "highestBid", "endDatetime"];
+        $optionsTextArray = ["Item Name", "Number of Bids", "Current Highest Bid", "End Date/Time"];
+        require "filterDropDown.php";
+
         $query = $_GET["query"]; 
         $catagory = $_GET["choices"];
 
@@ -28,6 +32,18 @@
                 $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($raw_results[$i]["auctionID"]);
                 $raw_results[$i] = array_merge($raw_results[$i], $highestBidInfo);
             }
+
+            // Sort the resulting rows using a custom sorting function that sorts each row by the selected
+            // key value
+            $key = $_GET["orderBySelect"];
+            usort($raw_results, function($row1, $row2) use ($key)
+            {
+                if ($row1[$key] == $row2[$key]) {
+                    return 0;
+                } else {
+                    return ($row1[$key] < $row2[$key]) ? -1 : 1;
+                }
+            });
 
             // HTML for the table to assign column headers
             echo "<table cellspacing='2' cellpadding='2'> 
