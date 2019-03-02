@@ -11,6 +11,7 @@
         $auctionID = $_GET["auctionID"];
         $auction_details = $dbHelper->fetch_item_auction($auctionID);
         $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
+        echo "<p>AuctionID:" . $auctionID . "</p>";
         $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
     } else {
         echo "<h1>Error: No auction ID was passed</h1>";

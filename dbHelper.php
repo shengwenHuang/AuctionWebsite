@@ -1,6 +1,6 @@
 <?php
-use ../PHPMailer\PHPMailer\PHPMailer;
-use ../PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
@@ -96,7 +96,9 @@ class DBHelper
     public function fetch_max_bid_for_auction($auctionID)
     {
         // Create a query to retrieve the bid details of the highest overall bid for a given auction
-        $query = $this->dbconnection->prepare("SELECT MAX(bidAmount) AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ? GROUP BY highestBiddt");
+        $query = $this->dbconnection->prepare("SELECT bidAmount AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?
+        ORDER BY highestBid DESC
+        LIMIT 1");
         $query->execute(array($auctionID));
         return $query->fetch();
     }
@@ -383,7 +385,7 @@ class DBHelper
         //Read an HTML message body from an external file, convert referenced images to embedded,
         //convert HTML into a basic plain-text alternative body
         // $mail->msgHTML(file_get_contents('contents.html'), __DIR__);
-        $mail->msgHTML('<p>Hi ' . $username . '</p><p>You have been outbid on auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . 'if you would like to raise your bid</p>');
+        $mail->msgHTML('<p>Hi ' . $username . '</p><p>You have been outbid on auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' if you would like to raise your bid</p>');
 
         //Replace the plain text body with one created manually
         $mail->AltBody = 'This is a plain-text message body';
