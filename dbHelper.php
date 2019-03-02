@@ -100,7 +100,7 @@ class DBHelper
         ORDER BY highestBid DESC
         LIMIT 1");
         $query->execute(array($auctionID));
-        return $query->fetch();
+        $rows["highestBid"] = $rows["highestBid"] / 100;
     }
 
     // TODO: WE NEED TO GET THE PURCHASE HISTORY TABLE FROM THE MAX BIDS FOR EACH AUCTION??
