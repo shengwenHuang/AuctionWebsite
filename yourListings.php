@@ -29,7 +29,6 @@
                 <th>Bids Number</th> 
                 <th>End Date</th>
             </tr>";
-
             // Populate the table with the row data
             foreach ($yourListings as $row) {         
                 echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>

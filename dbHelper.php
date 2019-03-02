@@ -128,16 +128,65 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT a.auctionID, i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
-                FROM items as i, bids as b, auctions as a
+                "SELECT a.auctionID, i.itemName, i.description, a.endDatetime
+                FROM items as i, auctions as a
                 WHERE i.itemID = a.itemID
-                AND a.auctionID = b.auctionID
                 AND a.endDatetime > now()
                 AND i.sellerID = ?
                 GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
             );
             $query->execute(array($this->userID));
-            return $query->fetchall();
+            $rows = $query->fetchall();
+            $query_get_bidsNumber = $this->dbconnection->prepare(
+                "SELECT COUNT(b.bidID) AS bidsNumber
+                FROM bids as b
+                WHERE auctionID = ?"
+            );
+            for ($i = 0; $i < sizeof($rows); $i++) {
+                $query_get_bidsNumber->execute(array($rows[$i]["auctionID"]));
+                $bidsNumberRow = $query_get_bidsNumber->fetch();
+                if (!isset($bidsNumberRow["bidsNumber"])) {
+                    $bidsNumberRow["bidsNumber"] = 0;
+                }
+                $rows[$i]["bidsNumber"] = $bidsNumberRow["bidsNumber"];
+            }
+            
+            // $bidsNumberRow = $query_get_bidsNumber->fetchall();
+            // for ($i = 0, $size = count($bidsNumberRow); $i < $size; ++$i) {
+            //     $row[$i]["bidsNumber"] = $bidsNumberRow[$i]["bidsNumber"];
+            // }
+            // foreach ($row as $r) {
+            //     if (!array_key_exists("bidsNumber", $r)) {
+            //         $r["bidsNumber"] = 0;
+            //     }
+            // }
+            
+            return $rows;
+            // $query = $this->dbconnection->prepare(
+            //     "SELECT a.auctionID, i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
+            //     FROM items as i, bids as b, auctions as a
+            //     WHERE i.itemID = a.itemID
+            //     AND a.auctionID = b.auctionID
+            //     AND a.endDatetime > now()
+            //     AND i.sellerID = ?
+            //     GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
+            // );
+            // $query->execute(array($this->userID));
+            // if ($query->rowCount() == 0) {
+            //     $query = $this->dbconnection->prepare(
+            //         "SELECT a.auctionID, i.itemName, i.description, a.endDatetime
+            //         FROM items as i, auctions as a
+            //         WHERE i.itemID = a.itemID
+            //         AND a.endDatetime > now()
+            //         AND i.sellerID = ?
+            //         GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
+            //     );
+            //     $query->execute(array(($this->userID)));
+            //     $row = $query->fetchall();
+            //     $row["bidsNumber"] = 0;
+            //     return $row;
+            // }
+            // return $query->fetchall();
         }
     }
 
@@ -190,9 +239,7 @@ class DBHelper
             $row["bidsNumber"] = 0;
             return $row;
         }
-        else {
-            return $query->fetch();
-        }        
+        return $query->fetch();    
     }
 
     public function fetch_item_categories($itemID)
