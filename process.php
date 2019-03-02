@@ -144,19 +144,19 @@
             } catch (PDOException $e) {
                 message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "ChangeEmail.php");
             }
-      
-      // If the result from the query is empty, return an error message to the index page.
-                if (!$result) {
-                    message_and_move("Could not find the provided username", "ChangeEmail.php");
-                }
-                else {
-        // Else check that the password provided in the login attempt matches that of the selected user.
-                if(password_verify($_POST["password"],$result["password"])) {
-                    $result = $dbHelper->update_email($email,$username);
-                    message_and_move("Email changed successfully! " . $_SESSION["username"], "updateAccount.php");
-                } else {
-                    message_and_move("Incorrect password provided, please try again", "ChangeEmail.php");
-                }
+                
+            // If the result from the query is empty, return an error message to the index page.
+            if (!$result) {
+              message_and_move("Could not find the provided username", "ChangeEmail.php");
+            }
+            else {   
+              // Else check that the password provided in the login attempt matches that of the selected user.
+              if(password_verify($_POST["password"],$result["password"])) {
+                $result = $dbHelper->update_email($email,$username);
+                message_and_move("Email changed successfully! " . $_SESSION["username"], "updateAccount.php");
+              } else {
+                message_and_move("Incorrect password provided, please try again", "ChangeEmail.php");
+              }
             }
         }
     }
@@ -177,20 +177,19 @@
             if (preg_match("/^.*(?=.{8,})(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$/", $newpassword1) === 0) {
                 message_and_move("Password must be at least 8 characters and must contain at least one lower case letter, one upper case letter and one digit","ChangePassword.php");
             } else {
-      // If the fields are not empty, set up a query to retrieve the user details for the
-      // provided username, using placeholders to prevent SQL injections.
+                // If the fields are not empty, set up a query to retrieve the user details for the
+                // provided username, using placeholders to prevent SQL injections.
                 try {
                     $result = $dbHelper->fetch_user($username);
                 } catch (PDOException $e) {
                         message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "ChangePassword.php");
                 }
       
-// If the result from the query is empty, return an error message to the index page.
+                // If the result from the query is empty, return an error message to the index page.
                 if (!$result) {
                     message_and_move("Could not find the provided username", "ChangePassword.php");
                 } else {
-        
-// Else check that the password provided in the login attempt matches that of the selected user.
+                // Else check that the password provided in the login attempt matches that of the selected user.
                     if(password_verify($_POST["password"],$result["password"])) {
                         $result = $dbHelper->change_password($newpassword1,$username);
                             message_and_move("Password changed successfully! " . $_SESSION["username"], "updateAccount.php");
@@ -266,6 +265,7 @@
       header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
       exit();
     }
+    
     // If the execution of the statement returned true, the insertion was successful. Otherwise, return to the auction page and raise an error.
     if ($result) {
       $message = "Bid was made successfully";

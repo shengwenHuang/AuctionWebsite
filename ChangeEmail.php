@@ -6,8 +6,10 @@
 ?>
 <!doctype html>
 <html>
+
 <head>
 </head>
+
 <body>
     <div id="body-content">
         <header>
@@ -16,9 +18,9 @@
 
         <div id="user-input">
             <form method="post" action="process.php">
-                <input type="text" name="username" placeholder="Enter your username"> <br/>
-                <input type="password" name="password" placeholder="Enter your password"> <br/>
-                <input type="email" name="newemail" placeholder="Enter your new Email address"> <br/>
+                <input type="text" name="username" placeholder="Enter your username"> <br />
+                <input type="password" name="password" placeholder="Enter your password"> <br />
+                <input type="email" name="newemail" placeholder="Enter your new Email address"> <br />
                 <input id="change-email" type="submit" name="change-email" value="submit" />
             </form>
             <?php if (isset($_GET['message'])) : ?>
