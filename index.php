@@ -1,7 +1,10 @@
 <?php
   define("accessChecker", TRUE);
+  session_start();
+  session_destroy();
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
+  
 ?>
 
 <!doctype html>
