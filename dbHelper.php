@@ -96,11 +96,18 @@ class DBHelper
     public function fetch_max_bid_for_auction($auctionID)
     {
         // Create a query to retrieve the bid details of the highest overall bid for a given auction
-        $query = $this->dbconnection->prepare("SELECT bidAmount AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?
-        ORDER BY highestBid DESC
-        LIMIT 1");
+        $query = $this->dbconnection->prepare(
+            "SELECT bidAmount AS highestBid, bidDatetime AS highestBiddt FROM bids WHERE auctionID = ?
+            ORDER BY highestBid DESC
+            LIMIT 1"
+        );
         $query->execute(array($auctionID));
+        $rows = $query->fetch();
+        if (!isset($rows["highestBid"])) {
+            $rows["highestBid"] = 0;
+        }
         $rows["highestBid"] = $rows["highestBid"] / 100;
+        return $rows;
     }
 
     // TODO: WE NEED TO GET THE PURCHASE HISTORY TABLE FROM THE MAX BIDS FOR EACH AUCTION??
