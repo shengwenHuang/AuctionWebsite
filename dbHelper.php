@@ -283,44 +283,38 @@ class DBHelper
         return $query->execute(array($itemID, $start_price * 100, $reserve_price * 100, $startDatetime, $endDatetime));
     }
 
-    public function search_results ($searchQuery, $category){
-        // changes characters used in html to their equivalents, for example: < to &gt;
-        $searchQuery = htmlspecialchars($searchQuery);
+    public function fetch_search_results ($searchQuery, $category){
+        // Changes characters used in html to their equivalents, for example: < to &gt
+        // $searchQuery = htmlspecialchars($searchQuery);
+        // $searchQuery = "%{$searchQuery}%";
 
-        // $searchQuery = mysql_real_escape_string($searchQuery);
-        $searchQuery = "%{$searchQuery}%";
+        // If there was no category selected, just seach by query string
         if ($category == "Category") {
             $query = $this->dbconnection->prepare(
-                "SELECT itemName, endDateTime, auctionID
-                FROM items, auctions
-                WHERE itemName LIKE CONCAT('%',?,'%')
-                AND items.itemID = auctions.itemID
-                AND endDateTime >=  NOW()
-                ORDER BY endDateTime DESC"
+                "SELECT a.auctionID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
+                FROM items as i, auctions as a
+                WHERE a.itemID = i.itemID
+                AND a.endDatetime > now()
+                AND itemName LIKE CONCAT('%',?,'%')"
             );
             $query->execute(array($searchQuery));
         }
         else {
+            // If a category was selected, search by query string and category name
             $query = $this->dbconnection->prepare(
-                "SELECT distinct itemName, endDateTime, auctionID
-                FROM items, auctions, itemCategories, categories
-                WHERE itemName LIKE CONCAT('%',?,'%')
-                AND items.itemID = auctions.itemID
-                AND items.itemID = itemCategories.itemID
-                AND itemCategories.itemID = categories.categoryID
-                and categories.categoryName = ?
-                AND endDateTime >=  NOW()
-                ORDER BY endDateTime DESC"
+                "SELECT a.auctionID, DISTINCT i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
+                FROM items as i, auctions as a, itemCategories as ic, categories as c
+                WHERE a.itemID = i.itemID
+                AND i.itemID = ic.itemID
+                AND ic.itemID = c.categoryID
+                AND a.endDatetime > now()
+                AND itemName LIKE CONCAT('%',?,'%')
+                AND c.categoryName = ?"
             );
             $query->execute(array($searchQuery, $category));
         }
         
-        // $query->bind_param("s", $searchQuery);
-        // return $query;
-        // $query->execute();
-        
         return $query->fetchall();
-        // return $query;
     }
 
     /**

@@ -46,7 +46,7 @@
           $_SESSION["username"] = "$username";
           $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
           // echo "<p>" . $_SESSION['userID'] . "hello </p>";
-          message_and_move("Successfully logged in to your account! " . $_SESSION["username"], "homepage.php");
+          message_and_move("Successfully logged in to your account!", "homepage.php");
           
         } else {
           message_and_move("Incorrect password provided, please try again", "index.php");
@@ -249,9 +249,6 @@
     }
 } elseif (isset($_POST["new-bid-made"])) {
   // Get all of the variables that will be needed from POST, SESSION and using an SQL query
-    
-  // TODO: When we have the session setup, use it here to get userID, for now use POST
-  // $userID = $_SESSION["userID"];
   $auctionID = $_POST["bid-auctionID"];
   $bidStartAmount = $_POST["bid-startAmount"];
   $bidAmount = $_POST["bid-amount"]*100;
@@ -285,6 +282,19 @@
     $message = "Please enter a valid bid amount";
     header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
     exit();
+  }
+} elseif (isset($_POST["search-button"])) {
+  // Get all of the variables that will be needed from POST
+  $query = $_POST["query"];
+  $choices = $_POST["choices"];
+  
+  // If the query string length is more or less than the minimum length, then accept the query
+  if (strlen($query) >= 3) {
+    header("Location: " . "search.php" . "?query=" . urlencode($query) . "&choices=" . urlencode($choices));
+    exit();        
+  } else {
+    // If query length is ltoo short, show an error message on the homepage screen
+    message_and_move("Invalid query string: must be at least 3 characters", "homepage.php");
   }
 } else {
   // The HTTP header does not reference a recognised button, so return an error to the index page.

@@ -12,6 +12,7 @@
 <html>
 
 <head>
+    <title>Search Results</title>
     <link rel="stylesheet" href="css/table.css">
 </head>
 

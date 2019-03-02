@@ -21,12 +21,18 @@
     </form>
 
     <?php
-        $optionsValueArray = ["itemName", "bidsNumber", "endDatetime"];
-        $optionsTextArray = ["Item Name", "Number of Bids", "End Date/Time"];
+        $optionsValueArray = ["itemName", "bidsNumber", "highestBid", "endDatetime"];
+        $optionsTextArray = ["Item Name", "Number of Bids", "Current Highest Bid", "End Date/Time"];
         require "filterDropDown.php";
 
-        $yourListings = $dbHelper -> fetch_your_listing($userID);
+        $yourListings = $dbHelper->fetch_your_listing($userID);
         if ($yourListings) {
+            // Get the current highest bid for each listing
+            for ($i = 0; $i < count($yourListings); $i++) {
+                $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($yourListings[$i]["auctionID"]);
+                $yourListings[$i] = array_merge($yourListings[$i], $highestBidInfo);
+            }
+
             // Sort the resulting rows using a custom sorting function that sorts each row by the selected
             // key value
             $key = $_GET["orderBySelect"];
@@ -44,7 +50,8 @@
             <tr> 
                 <th>Item Name</th> 
                 <th>Item Description</th>
-                <th>Bids Number</th> 
+                <th>Bids Number</th>
+                <th>Current Highest Bid</th> 
                 <th>End Date</th>
             </tr>";
 
@@ -54,6 +61,7 @@
                     <td>" . $row["itemName"] . "</td> 
                     <td>" . $row["description"] . "</td>
                     <td>" . $row["bidsNumber"] . "</td>
+                    <td>" . $row["highestBid"] . "</td>
                     <td>" . $row["endDatetime"] . "</td>
                 </tr>";
             }
