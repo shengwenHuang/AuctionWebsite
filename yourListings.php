@@ -30,7 +30,7 @@
             // Get the current highest bid for each listing
             for ($i = 0; $i < count($yourListings); $i++) {
                 $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($yourListings[$i]["auctionID"]);
-                $yourListings[$i]["highestBid"] = $highestBidInfo["highestBid"];
+                $yourListings[$i]["highestBid"] = $highestBidInfo["highestBid"] / 100;
             }
             
             // Sort the resulting rows using a custom sorting function that sorts each row by the selected

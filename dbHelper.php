@@ -117,7 +117,7 @@ class DBHelper
         if (!isset($rows["highestBid"])) {
             $rows["highestBid"] = 0;
         }
-        $rows["highestBid"] = $rows["highestBid"] / 100;
+        $rows["highestBid"] = $rows["highestBid"];
         return $rows;
     }
 
