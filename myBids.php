@@ -71,8 +71,8 @@
                 echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
                           <td>" . $row["itemName"] . "</td> 
                           <td>" . $row["description"] . "</td> 
-                          <td>£" . number_format($row["yourBid"], 2) . " (" . $row["yourBiddt"] . ")</td> 
-                          <td>£" . number_format($row["highestBid"], 2) . " (" . $row["highestBiddt"] . ")</td> 
+                          <td>£" . number_format($row["yourBid"]/100, 2) . " (" . $row["yourBiddt"] . ")</td> 
+                          <td>£" . number_format($row["highestBid"]/100, 2) . " (" . $row["highestBiddt"] . ")</td> 
                           <td>" . $row["endDatetime"] . "</td>
                       </tr>";
             }
