@@ -260,6 +260,7 @@
     $bidDatetime = date("Y-m-d H:i:s");
     // Try to add the new bid to the table
     try {
+      $dbHelper->sendEmailifOutbid($auctionID);
       $result = $dbHelper->insert_new_bid($userID, $auctionID, $bidAmount, $bidDatetime);
     } catch (PDOException $e) {
       $message = "Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode();
@@ -269,18 +270,25 @@
     
     // If the execution of the statement returned true, the insertion was successful. Otherwise, return to the auction page and raise an error.
     if ($result) {
+      //// add code here
+      // header_remove();
+      // message_and_move("Direct access not permitted, redirected to login", "itemAuction.php");
+// . "&auctionID=" . $auctionID
       $message = "Bid was made successfully";
-      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
+      // header("Location: " . "http://localhost:8888/itemAuction.php" . "?message=" . urlencode($message). "&auctionID=" . $auctionID);
       exit();
     } else {
       $message = "Error adding new bid, bid was not added";
-      header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      // header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+      echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
       exit();
     }
   } else {
     // The bid was invalid, so return to the item page and indicate this
     $message = "Please enter a valid bid amount";
-    header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    // header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    echo '<script type="text/javascript">window.location = "http://localhost:8888/itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
     exit();
   }
 } elseif (isset($_POST["search-button"])) {
@@ -300,4 +308,6 @@
   // The HTTP header does not reference a recognised button, so return an error to the index page.
   message_and_move("Direct access not permitted, redirected to login", "index.php");
 }
+
+
 ?>

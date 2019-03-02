@@ -58,10 +58,9 @@
             <h2 id="highest-bid" style="margin-right: 15px">Current Highest Bid: £<?php echo number_format($max_bid["highestBid"]/100, 2) ?></h2>
             <p id="total-bids" style="margin-right: 25px">(Total Number of Bids: <?php echo $auction_details["bidsNumber"] ?>)</p>
             <?php 
-                $auctionDt = strtotime($auction_details["startDatetime"]);
+                $auctionDt = strtotime($auction_details["endDatetime"]);
                 $currentDateObject = date("Y-m-d H:i:s");
                 $currentDt = strtotime($currentDateObject);
-
                 // Only display the new bid button if the auction has not ended and the current user is not the seller
                 if (($currentDt < $auctionDt) && ($userID != $auction_details["sellerID"])) {
                     echo "<button id='new-bid-btn' type='button' style='height: fit-content; margin-right: 25px'>New Bid</button>";
