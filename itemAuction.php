@@ -1,19 +1,21 @@
 <?php
-  include "redirectIfNotLoggedIn.php";
-  include "header.php";
-  require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
-  $userID = $_SESSION["userID"];
+    define("accessChecker", TRUE);
+    
+    require "redirectIfNotLoggedIn.php";
+    require "dbHelper.php";
+    $dbHelper = new DBHelper(null);
+    require "header.php";
 
-  if (isset($_GET["auctionID"])) {
-    $auctionID = $_GET["auctionID"];
-    $auction_details = $dbHelper->fetch_item_auction($auctionID);
-    $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
-    $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
-  } else {
-      echo "<h1>Error: No auction ID was passed</h1>";
-      die();
-  }
+    $userID = $_SESSION["userID"];
+    if (isset($_GET["auctionID"])) {
+        $auctionID = $_GET["auctionID"];
+        $auction_details = $dbHelper->fetch_item_auction($auctionID);
+        $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
+        $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
+    } else {
+        echo "<h1>Error: No auction ID was passed</h1>";
+        die();
+    }
 ?>
 
 <!doctype html>

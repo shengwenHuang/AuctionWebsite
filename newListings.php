@@ -1,8 +1,10 @@
 <?php 
-    require "redirectIfNotLoggedIn.php";
-    include "header.php";
-    require "dbHelper.php";
-    $dbHelper = new DBHelper($userID);
+  define("accessChecker", TRUE);
+  
+  require "redirectIfNotLoggedIn.php";  
+  require "dbHelper.php";
+  $dbHelper = new DBHelper(null);  
+  require "header.php";
 ?>
 
 <!doctype html>
@@ -13,7 +15,7 @@
   <title>New Listings</title>
 </head>
 
-<body onload="loadGen('#year1', '#month1', '#day1', '#year2', '#month2', '#day2')">
+<body onload="loadGen('#year', '#month', '#day')">
   <div id="body-content">
     <header>
       <h1>Add new items</h1>
@@ -22,73 +24,62 @@
       <form method="post" action=process.php>
         <input type="text" id="itemname" name="itemname" placeholder="Item" /><br />
         <input type="text" id="item-detail" name="item-detail" placeholder="Tell us about this item" /><br />
-        <input type="text" id="item-category" name="item-category" placeholder="category" /><br />
-        <input type="number" id="start-price" name="start-price" placeholder="Start price" /><br />
-        <input type="number" id="reserve-price" name="reserve-price" placeholder="Reserve price" /><br />
-        <form>
-          <p class="fallbackLabel">Auction start date:</p>
-          <div class="fallbackDatePicker">
-            <span>
-              <label for="day1">Day:</label>
-              <select id="day1" name="day1">
-              </select>
-            </span>
-            <span>
-              <label for="month1">Month:</label>
-              <select id="month1" name="month1">
-                <option selected>January</option>
-                <option>February</option>
-                <option>March</option>
-                <option>April</option>
-                <option>May</option>
-                <option>June</option>
-                <option>July</option>
-                <option>August</option>
-                <option>September</option>
-                <option>October</option>
-                <option>November</option>
-                <option>December</option>
-              </select>
-            </span>
-            <span>
-              <label for="year1">Year:</label>
-              <select id="year1" name="year1">
-              </select>
-            </span>
-          </div>
-        </form>
-        <form>
-          <p class="fallbackLabel">Auction end date:</p>
-          <div class="fallbackDatePicker">
-            <span>
-              <label for="day2">Day:</label>
-              <select id="day2" name="day1">
-              </select>
-            </span>
-            <span>
-              <label for="month2">Month:</label>
-              <select id="month2" name="month2">
-                <option selected>January</option>
-                <option>February</option>
-                <option>March</option>
-                <option>April</option>
-                <option>May</option>
-                <option>June</option>
-                <option>July</option>
-                <option>August</option>
-                <option>September</option>
-                <option>October</option>
-                <option>November</option>
-                <option>December</option>
-              </select>
-            </span>
-            <span>
-              <label for="year2">Year:</label>
-              <select id="year2" name="year2">
-              </select>
-            </span>
-          </div>
-        </form>
+        <!-- category -->
+        <div>
+          <div class="inner-form">
+            <div class="input-field first-wrap">
+              <div class="input-select">
+                <select data-trigger="" id="category" name="category">
+                  <option placeholder="">Category</option>
+                  <?php
+                  $result = $dbHelper -> get_catagories();
+                  if ($result) {
+                    foreach ($result as $row) {
+                        echo '<option>'.$row["categoryName"].'</option>';
+                    }
+                }
+                  ?>
+                </select>
+                </div>
+              </div>  
+            </div>
+        </div>
+        <!--------------->
+        <input type="number" step=".01" id="start-price" name="start-price" placeholder="Start price" /><br />
+        <input type="number" step=".01" id="reserve-price" name="reserve-price" placeholder="Reserve price" /><br />
+        <!-- date picker -->
+        <p class="fallbackLabel">Auction end date:</p>
+        <div class="fallbackDatePicker">
+          <span>
+            <label for="day">Day:</label>
+            <select id="day" name="day">
+            </select>
+          </span>
+          <span>
+            <label for="month">Month:</label>
+            <select id="month" name="month">
+              <option selected>01</option>
+              <option>02</option>
+              <option>03</option>
+              <option>04</option>
+              <option>05</option>
+              <option>06</option>
+              <option>07</option>
+              <option>08</option>
+              <option>09</option>
+              <option>10</option>
+              <option>11</option>
+              <option>12</option>
+            </select>
+          </span>
+          <span>
+            <label for="year">Year:</label>
+            <select id="year" name="year">
+            </select>
+          </span>
+        </div>
+        <!-- --------- -->
+        <input type="time" id="end-time" name="end-time" placeholder="Auction end time" /><br />
         <input id="auction-btn" type="submit" name="save-auction" value="Create an Auction" /><br />
       </form>
       <?php if (isset($_GET['message'])): ?>
@@ -99,9 +90,8 @@
     </div>
   </div>
   <script>
-    function loadGen (year1, month1, day1, year2, month2, day2) {
-      genDatePicker (year1, month1, day1);
-      genDatePicker (year2, month2, day2);
+    function loadGen (year, month, day) {
+      genDatePicker (year, month, day);
     }
     function genDatePicker (year, month, day){
       var fallbackPicker = document.querySelector('.fallbackDatePicker');
@@ -130,9 +120,9 @@
         var dayNum;
 
         // 31 or 30 days?
-        if(month === 'January' || month === 'March' || month === 'May' || month === 'July' || month === 'August' || month === 'October' || month === 'December') {
+        if(month === '01' || month === '03' || month === '05' || month === '07' || month === '08' || month === '10' || month === '12') {
           dayNum = 31;
-        } else if(month === 'April' || month === 'June' || month === 'September' || month === 'November') {
+        } else if(month === '04' || month === '06' || month === '09' || month === '11') {
           dayNum = 30;
         } else {
         // If month is February, calculate whether it is a leap year or not
@@ -144,7 +134,8 @@
         // inject the right number of new <option> elements into the day <select>
         for(i = 1; i <= dayNum; i++) {
           var option = document.createElement('option');
-          option.textContent = i;
+          j = ('0' + i).slice(-2);
+          option.textContent = j;
           daySelect.appendChild(option);
         }
 

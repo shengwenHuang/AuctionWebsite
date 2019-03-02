@@ -1,10 +1,14 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use ../PHPMailer\PHPMailer\PHPMailer;
+use ../PHPMailer\PHPMailer\Exception;
 
 require '../PHPMailer/src/Exception.php';
 require '../PHPMailer/src/PHPMailer.php';
 require '../PHPMailer/src/SMTP.php';
+if(!defined("accessChecker")) {
+    die("Direct access not permitted");
+}
+
 class DBHelper
 {
     private $userID;
@@ -184,7 +188,21 @@ class DBHelper
             GROUP BY i.itemID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime"
         );
         $query->execute(array($auctionID));
-        return $query->fetch();
+        if ($query->rowCount() == 0) {
+            $query = $this->dbconnection->prepare(
+                "SELECT i.itemID, i.sellerID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
+                FROM items as i, auctions as a
+                WHERE i.itemID = a.itemID
+                AND a.auctionID = ?"
+            );
+            $query->execute(array($auctionID));
+            $row = $query->fetch();
+            $row["bidsNumber"] = 0;
+            return $row;
+        }
+        else {
+            return $query->fetch();
+        }        
     }
 
     public function fetch_item_categories($itemID)
@@ -239,17 +257,36 @@ class DBHelper
         $row = $query->fetch();
         return $row["itemID"];
     }
-    
-    public function insert_item($itemName,$sellerID, $description)
-    {
-        $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID,description) VALUES ( ?, ?, ?)");
-        return $query->execute(array($itemName,$sellerID, $description));
+
+    public function fetch_categoryid_from_category($item_category){
+        $query = $this->dbconnection->prepare(
+            "SELECT categoryID FROM categories WHERE categoryName = ?");
+        $query->execute(array($item_category));
+        $row = $query->fetch();
+        return $row["categoryID"];
     }
     
-    public function insert_auction($itemID,$startPrice, $reservePrice,$StartDate,$EndDate)
+    public function insert_item($itemName, $sellerID, $description)
     {
-        $query = $this->dbconnection->prepare("INSERT INTO auctions (itemID,startPrice,reservePrice,StartDatetime,endDatetime) VALUES ( ?, ?, ?, ?, ?)");
-        return $query->execute(array($itemID,$startPrice, $reservePrice,$StartDate,$EndDate));
+        $query = $this->dbconnection->prepare("INSERT INTO items (itemName, sellerID, description) VALUES (?, ?, ?)");
+        $result = $query->execute(array($itemName, $sellerID, $description)); // true or false
+        $newItemID = $this->dbconnection->lastInsertId();
+        if ($result) { // if the insert succeed, then return the itmeID
+            return $newItemID;
+        }
+        return; // if the insert failed, return null and insert_auction will throw an error
+    }
+
+    public function insert_item_category($newItemID, $categoryID)
+    {
+        $query = $this->dbconnection->prepare("INSERT INTO itemCategories (itemID, categoryID) VALUES (?, ?)");
+        return $query->execute(array($newItemID, $categoryID));
+    }
+    
+    public function insert_auction($itemID, $start_price, $reserve_price, $startDatetime, $endDatetime)
+    {
+        $query = $this->dbconnection->prepare("INSERT INTO auctions (itemID,startPrice,reservePrice,startDatetime,endDatetime) VALUES ( ?, ?, ?, ?, ?)");
+        return $query->execute(array($itemID, $start_price * 100, $reserve_price * 100, $startDatetime, $endDatetime));
     }
 
     public function search_results ($searchQuery, $category){

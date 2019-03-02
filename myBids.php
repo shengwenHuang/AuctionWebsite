@@ -1,9 +1,11 @@
 <?php 
+    define("accessChecker", TRUE);
+    
     require "redirectIfNotLoggedIn.php";
-    include "header.php";
     require "dbHelper.php";
     $userID = $_SESSION["userID"];
     $dbHelper = new DBHelper($userID);
+    require "header.php";
 ?>
 
 <!doctype html>
@@ -15,6 +17,11 @@
 
 <body>
     <?php
+        // Add dropdown for sorting the order of displayed items
+        $optionsValueArray = ["itemName", "yourBid", "yourBiddt", "endDatetime"];
+        $optionsTextArray = ["Item Name", "Your Bids Amount", "Your Bids Datetime", "Auction End Datetime"];
+        require "filterDropDown.php";
+
         // Retrieve a list of distinct auctionIDs that the current user has bid on
         $auctionArray = $dbHelper->fetch_auctions_by_user();
 
@@ -36,6 +43,18 @@
                 $rowData[$i] = array_merge($rowData[$i], $highestBidInfo);
                 $rowData[$i] = array_merge($rowData[$i], $auctionArray[$i]);
             }
+
+            // Sort the resulting rows using a custom sorting function that sorts each row by the selected
+            // key value
+            $key = $_GET["orderBySelect"];
+            usort($rowData, function($row1, $row2) use ($key)
+            {
+                if ($row1[$key] == $row2[$key]) {
+                    return 0;
+                } else {
+                    return ($row1[$key] < $row2[$key]) ? -1 : 1;
+                }
+            });
 
             // HTML for the table to assign column headers
             echo "<table cellspacing='2' cellpadding='2'> 

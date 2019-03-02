@@ -1,6 +1,7 @@
 <?php
-  require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
+    define("accessChecker", TRUE);
+    require "dbHelper.php";
+    $dbHelper = new DBHelper(null);
 ?>
 
 <!doctype html>
