@@ -206,29 +206,39 @@
     $sellerID = $dbHelper->fetch_user_id_from_username($_SESSION["username"]);
     $itemname = $_POST["itemname"];
     $item_detail = trim($_POST["item-detail"]);
-    $item_category = trim($_POST["item-category"]);
+    $item_category = $_POST["category"];
     $start_price = $_POST["start-price"];
     $reserve_price = $_POST["reserve-price"];
-    $startdate = $_POST["start-datetime"];
-    $enddate = $_POST["end-datetime"];
+    $day = $_POST["day"];
+    $month = $_POST["month"];
+    $year = $_POST["year"];
+    $time = $_POST["end-time"];
+
+    $startDatetime = date("Y-m-d H:i:s");
+    $endDatetime = date("Y-m-d H:i:s", strtotime($year. "-" .$month. "-" .$day. " " .$time. ":00"));
     
     // Check that each field is not empty. If they are, return an error message to the newListings page. 
     // If all fields are filled, return any validation messages to user
     if (!isset($itemname) || empty($itemname) || !isset($item_detail) || empty($item_detail) || 
       !isset($item_category) || empty($item_category) || !isset($start_price) || empty($start_price) ||
-      !isset($reserve_price) || empty($reserve_price)) {
+      !isset($reserve_price) || empty($reserve_price) || !isset($day) || empty($day) || 
+      !isset($month) || empty($month) || !isset($year) || empty($year)||
+      !isset($time) || empty($time)) {
         message_and_move("Please ensure all fields have been completed", "newListings.php");
+    } elseif ($endDatetime < $startDatetime) {
+        message_and_move("The end date should not be earlier than today.", "newListings.php");
+    } elseif ($start_price > $reserve_price) {
+        message_and_move("The start price is higher than the reserve price.", "newListings.php");
     } else {
-      // If the result from the query is empty, the username is valid, so add the new user details to the database.
       try {
-          $result = $dbHelper->fetch_item_auction($itemname,$sellerID, $item_detail);
+        $itemID = $dbHelper->insert_item($itemname, $sellerID, $item_detail);
+        $result = $dbHelper->insert_auction($itemID, $start_price, $reserve_price, $startDatetime, $endDatetime);
       } catch (PDOException $e) {
-        message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "newListings.php");
+            message_and_move("Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode(), "newListings.php");
       }
       // If the execution of the statement returned true, the insertion was successful. Otherwise, raise an error.
       if ($result) {
-          $itemID = $dbHelper->fetch_itemid_from_items($itemname,$sellerID);
-          $result = $dbHelper->insert_auction($itemID,$start_price, $reserve_price,$startdate,$enddate);
+          
         message_and_move("Success! New listing created.", "newListings.php");
       } else {
         message_and_move("Error inserting new listing.", "newListings.php");
