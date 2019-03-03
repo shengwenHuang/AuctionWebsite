@@ -31,7 +31,7 @@
 </div>
 
 <script>
-    document.getElementById("orderBySelect").addEventListener("change", function () {
+    document.getElementById("orderBySelect").addEventListener("change", function(event) {
         var selected = event.target.value;
         var url = location.protocol + '//' + location.host + location.pathname;
         url += ("?orderBySelect=" + selected);

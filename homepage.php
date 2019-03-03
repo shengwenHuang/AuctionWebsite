@@ -55,20 +55,18 @@
       echo "<h3>" . $_GET["message"] . "</h3>";
     }
   ?>
+
+  <h1>Recommendations</h1>
+  <?php
+    $userID = $_SESSION["userID"];
+    $auctionID = $dbHelper->fetch_auctionID_from_bids($userID);
+    //$itemID = $dbHelper->fetch_itemid_from_auctions($auctionID);
+    //$categoryID = $dbHelper->fetch_favorite_categories($itemID);
+    // $result = $dbHelper->fetch_all_items_from_categoris($result);
+    //$result = $dbHelper->fetch_popular_auctionID($categoryID);
+    echo $userID,"</br>";
+    echo print_r($auctionID),"</br>";
+  ?>
 </body>
 
-<body>
-    <h1>Reccomadations</h1>
-<?php
-  session_start();
-  $userID = $_SESSION["userID"];
-  $auctionID = $dbHelper->fetch_auctionID_from_bids($userID);
-  //$itemID = $dbHelper->fetch_itemid_from_auctions($auctionID);
-  //$categoryID = $dbHelper->fetch_favorite_categories($itemID);
-  // $result = $dbHelper->fetch_all_items_from_categoris($result);
-  //$result = $dbHelper->fetch_popular_auctionID($categoryID);
-  echo $userID,"</br>";
-  echo print_r($auctionID),"</br>";
-?>
-</body>    
 </html>
