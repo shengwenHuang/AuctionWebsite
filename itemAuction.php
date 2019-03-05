@@ -70,7 +70,6 @@
 
         <!-- TODO: Hide new bid button if sellerID = current userID and if auction is in the past -->
         <div id="new-bid" style="display: none; border: 1px solid black; padding: 10px">
-            <p style="margin-top: 0px">Your last highest bid: (php code)!!!!!!</p>
             <form action="process.php" method="POST">
                 <label for="new-bid-amount">Bid Amount:</label>
                 <div id="new-bid-amount" style="display: flex; align-items: center; margin-bottom: 25px">
