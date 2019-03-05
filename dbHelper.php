@@ -484,7 +484,10 @@ class DBHelper
         return $query->fetchall();
     }
 
-    public function sendEmailifOutbid($auctionID) {
+    // function to send email to highest current bidder. call before inserting a new highest bidder to inform the previous highest
+    // bidder that they have been outbid. Or pass in bool = true at the end of the auction to email the highest bidder and inform them that they've
+    // won the auction.
+    public function sendEmailifOutbid($auctionID, $bool = false) {
         
 
         $query = $this->dbconnection->prepare(
@@ -535,12 +538,22 @@ class DBHelper
         //Set who the message is to be sent to
         $mail->addAddress($email, $username);
         //Set the subject line
-        $mail->Subject = 'You have been outbid!';
+        if ($bool) {
+            $mail->Subject = 'You\'ve won the auction!';
+        }
+        else {
+            $mail->Subject = 'You have been outbid!';
+        }
+        
         //Read an HTML message body from an external file, convert referenced images to embedded,
         //convert HTML into a basic plain-text alternative body
         // $mail->msgHTML(file_get_contents('contents.html'), __DIR__);
-        $mail->msgHTML('<p>Hi ' . $username . '</p><p>You have been outbid on auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' if you would like to raise your bid</p>');
-
+        if ($bool) {
+            $mail->msgHTML('<p>Hi ' . $username . '</p><p>You won auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your purchase</p>');
+        }
+        else {
+            $mail->msgHTML('<p>Hi ' . $username . '</p><p>You have been outbid on auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' if you would like to raise your bid</p>');
+        }
         //Replace the plain text body with one created manually
         $mail->AltBody = 'This is a plain-text message body';
         //Attach an image file
