@@ -484,7 +484,7 @@ class DBHelper
         return $query->fetchall();
     }
 
-    function sendEmailifOutbid($auctionID) {
+    public function sendEmailifOutbid($auctionID) {
         
 
         $query = $this->dbconnection->prepare(
@@ -556,24 +556,14 @@ class DBHelper
             #    echo "Message saved!";
             #}
         }
-    }
 
-    public function close_auctions() {
-        // If a category was selected, search by query string and category name
         $query = $this->dbconnection->prepare(
-            "SELECT a.auctionID, DISTINCT i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
-            FROM items as i, auctions as a, itemCategories as ic, categories as c
-            WHERE a.itemID = i.itemID
-            AND i.itemID = ic.itemID
-            AND ic.itemID = c.categoryID
-            AND a.endDatetime > now()
-            AND itemName LIKE CONCAT('%',?,'%')
-            AND c.categoryName = ?"
+            "INSERT INTO notifications (userID, auctionID, datetimeAdded) VALUES(?,?,NOW())"
         );
-        $query->execute(array($searchQuery, $category));
-    
-        return $query->fetchall();  
-    } 
+        $query->execute(array($this->userID, $auctionID));
+
+      return;
+      }
 
     /**
      * Destroy the database connection when the object is no longer required
