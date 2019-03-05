@@ -562,7 +562,24 @@ class DBHelper
             "INSERT INTO notifications (userID, auctionID, datetimeAdded) VALUES(?,?,NOW())"
         );
         $query->execute(array($userID, $auctionID));
-      }
+    }    
+
+    public function close_auctions()
+    {
+        $query = $this->dbconnection->prepare(
+            "SELECT a.auctionID FROM auctions as a WHERE a.endDatetime < now() AND a.endDatetime > addtime(now(), '-01:00')"
+        );
+        $query->execute();
+        $closedAuctions = $query->fetchall();
+
+        if ($closedAuctions->rowCount() > 0) {
+            foreach ($closedAuctions as $auction) {
+                $auctionID = $auction["auctionID"];
+                sendEmailifOutbid($auctionID, true);
+                sendEmailtoSellerAtAuctionEnd($auctionID);
+            }
+        }
+    }
 
     /**
      * Destroy the database connection when the object is no longer required
