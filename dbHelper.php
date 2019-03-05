@@ -687,6 +687,20 @@ class DBHelper
         $query->execute(array($userID, $auctionID));
     }
 
+    public function fetch_reccomendations () {
+        $query = $this->dbconnection->prepare(
+            "SELECT itemName, description, startprice, reserveprice, startDatetime, endDatetime, dateOfReccomendation, auctionID
+            FROM reccomendations, items, auctions
+            WHERE userID = ?
+            AND itemReccomendation = items.itemID
+            AND items.itemID = auctions.itemID
+            ORDER by dateOfReccomendation DESC
+            LIMIT 5"
+        );
+        $query->execute(array($this->$userID));
+        return $query->fetch_all();
+    }
+
     /**
      * Destroy the database connection when the object is no longer required
      *
