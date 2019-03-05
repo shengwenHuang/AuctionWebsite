@@ -13,7 +13,7 @@
 <head>
   <meta charset="utf-8" />
   <title>EbayLite</title>
-  <!-- <link rel="stylesheet" href="css/style.css" type="text/css"> -->
+  <link rel="stylesheet" href="css/table.css" />
 </head>
 
 <body>
@@ -56,32 +56,52 @@
     }
   ?>
 
-  <h1>Recommendations</h1>
+  <h1 style="margin: 15px 0px 15px 0px">Recommendations</h1>
   <?php
-    $userID = $_SESSION["userID"];
-    $auctionID = $dbHelper->fetch_auctionID_from_bids($userID);
-    
-    //$itemID = $dbHelper->fetch_itemid_from_auctions($auctionID);
-    //$categoryID = $dbHelper->fetch_favorite_categories($itemID);
-    // $result = $dbHelper->fetch_all_items_from_categoris($result);
-    //$result = $dbHelper->fetch_popular_auctionID($categoryID);
-    echo $userID,"</br>";
-    
-    // HTML for the table to assign column headers
-    echo "<table cellspacing='2' cellpadding='2'> 
-        <tr> 
-        <th>Item Name</th> 
+    $recommendations = $dbHelper->fetch_recommendations();
+    if ($recommendations) {
+      // Get the highest bid for each item auction that was returned
+      for ($i = 0; $i < count($raw_results); $i++) {
+        $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($raw_results[$i]["auctionID"]);
+        $raw_results[$i] = array_merge($raw_results[$i], $highestBidInfo);
+      
+      }
+       
+      // HTML for the table to assign column headers
+      echo "<table cellspacing='2' cellpadding='2'> 
+        <tr>
+          <th>Item Name</th> 
+          <th>Item Description</th>
+          <th>Start Price</th> 
+          <th>Reserve Price</th> 
+          <th>Start Datetime</th>
+          <th>End Datetime</th> 
+          <th>Highest Bid</th>
+          <th>Recommendation Datetime</th>
         </tr>";
 
-    // Populate the table with the row data
-    foreach ($auctionID as $row) {         
+      // Populate the table with the row data
+      foreach ($recommendations as $row) {         
         echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
-            </tr>";
-    }
+          <td>" . $row["itemName"] . "</td> 
+          <td>" . $row["description"] . "</td> 
+          <td>£" . number_format($row["startPrice"]/100, 2) . "</td>
+          <td>£" . number_format($row["reservePrice"]/100, 2) . "</td>
+          <td>" . $row["startDatetime"] . "</td>
+          <td>" . $row["endDatetime"] . "</td>
+          <td>£" . number_format($row["highestBid"]/100, 2) . "</td>
+          <td>£" . $row["dateOfRecommendation"] . "</td>
+        </tr>";
+      }
 
-    // Free up the memory used by the array
-    unset($auctionID);
+      // Free up the memory used by the array
+      unset($recommendations);
+    } else {
+        echo "No recommendations yet";
+    }
   ?>
+
+  <script type="text/javascript" src="js/table.js"></script>
 </body>
 
 </html>
