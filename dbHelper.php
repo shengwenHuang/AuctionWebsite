@@ -484,7 +484,7 @@ class DBHelper
         return $query->fetchall();
     }
 
-    function sendEmailifOutbid($auctionID) {
+    public function sendEmailifOutbid($auctionID) {
         
 
         $query = $this->dbconnection->prepare(
@@ -556,6 +556,12 @@ class DBHelper
             #    echo "Message saved!";
             #}
         }
+
+        $query = $this->dbconnection->prepare(
+            "INSERT INTO notifications (userID, auctionID, datetimeAdded) VALUES(?,?,NOW())"
+        );
+        $query->execute(array($this->userID, $auctionID));
+
       return;
       }
 
