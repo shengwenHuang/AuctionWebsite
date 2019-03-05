@@ -488,7 +488,7 @@ class DBHelper
         
 
         $query = $this->dbconnection->prepare(
-            "SELECT username, email
+            "SELECT username, email, userID
             FROM users
             WHERE userID = (SELECT userID
             FROM bids
@@ -499,6 +499,7 @@ class DBHelper
         ob_start();
         $query->execute(array($auctionID));
         $row = $query->fetch();
+        $userID = $row['userID'];
         $username = $row['username'];
         $email = $row['email'];
         // use PHPMailer\PHPMailer\PHPMailer;
@@ -560,9 +561,7 @@ class DBHelper
         $query = $this->dbconnection->prepare(
             "INSERT INTO notifications (userID, auctionID, datetimeAdded) VALUES(?,?,NOW())"
         );
-        $query->execute(array($this->userID, $auctionID));
-
-      return;
+        $query->execute(array($userID, $auctionID));
       }
 
     /**
