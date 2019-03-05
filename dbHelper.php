@@ -378,9 +378,15 @@ class DBHelper
     
     public function fetch_auctionID_from_bids($userID){
         $query = $this->dbconnection->prepare(
-            "SELECT auctionID FROM bids WHERE userID = ?");
+            "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberofbids
+            FROM itemcategories, bids, auctions
+            WHERE auctions.auctionID = bids.auctionID
+            AND auctions.itemID = itemcategories.itemID
+            AND bids.userID = ?
+            GROUP BY itemcategories.CategoryID
+            ORDER BY 'numberofbids' DESC");
         $query->execute(array($userID));
-        $row = $query->fetch();
+        $row = $query->fetchall();
         return $row;
     }
     
