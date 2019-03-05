@@ -469,7 +469,7 @@ class DBHelper
         else {
             // If a category was selected, search by query string and category name
             $query = $this->dbconnection->prepare(
-                "SELECT a.auctionID, DISTINCT i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
+                "SELECT a.auctionID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
                 FROM items as i, auctions as a, itemCategories as ic, categories as c
                 WHERE a.itemID = i.itemID
                 AND i.itemID = ic.itemID
