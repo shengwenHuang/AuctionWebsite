@@ -487,9 +487,7 @@ class DBHelper
     // function to send email to highest current bidder. call before inserting a new highest bidder to inform the previous highest
     // bidder that they have been outbid. Or pass in bool = true at the end of the auction to email the highest bidder and inform them that they've
     // won the auction.
-    public function sendEmailifOutbid($auctionID, $bool = false) {
-        
-
+    public function sendEmailToBidder($auctionID, $bool = false) {
         $query = $this->dbconnection->prepare(
             "SELECT username, email, userID
             FROM users
@@ -502,6 +500,9 @@ class DBHelper
         ob_start();
         $query->execute(array($auctionID));
         $row = $query->fetch();
+        if (isset($row)) {
+            return;
+        }
         $userID = $row['userID'];
         $username = $row['username'];
         $email = $row['email'];
@@ -576,6 +577,8 @@ class DBHelper
         );
         $query->execute(array($userID, $auctionID));
       }
+
+    // public function sendEmailToSellerAtAuctionEnd
 
     /**
      * Destroy the database connection when the object is no longer required
