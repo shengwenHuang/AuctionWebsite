@@ -34,7 +34,34 @@
     document.getElementById("orderBySelect").addEventListener("change", function(event) {
         var selected = event.target.value;
         var url = location.protocol + '//' + location.host + location.pathname;
-        url += ("?orderBySelect=" + selected);
+
+        if (location.search.includes("orderBySelect")) {
+            var searchParams = location.search.split("&");
+            for (i=0; i<searchParams.length; i++) {
+                if (searchParams[i].includes("orderBySelect")) {
+                    if (i == 0) {
+                        searchParams[i] = ("?orderBySelect=" + selected);
+                        url += searchParams[i];
+                    } else {
+                        searchParams[i] = ("&orderBySelect=" + selected);
+                        url += searchParams[i];
+                    }
+                } else {
+                    if (i == 0) {
+                        url += searchParams[i];
+                    } else {
+                        url += "&" + searchParams[i];
+                    }
+                }
+            }
+        } else {
+            if (location.search.length > 1) {
+                url += location.search + "&orderBySelect=" + selected;
+            } else {
+                url += ("?orderBySelect=" + selected);
+            }
+        }
+
         window.location.href = url;
     });
 </script>

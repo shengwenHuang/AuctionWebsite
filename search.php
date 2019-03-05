@@ -18,8 +18,8 @@
 <body>
     <h1 style="margin-bottom: 20px">Search Results</h1>
     <?php
-        $optionsValueArray = ["itemName", "bidsNumber", "highestBid", "endDatetime"];
-        $optionsTextArray = ["Item Name", "Number of Bids", "Current Highest Bid", "End Date/Time"];
+        $optionsValueArray = ["itemName", "startPrice", "reservePrice", "startDatetime", "endDatetime", "highestBid"];
+        $optionsTextArray = ["Item Name", "Start Price", "Reserve Price", "Start Date/Time", "End Date/Time", "Highest Bid"];
         require "filterDropDown.php";
 
         $query = $_GET["query"]; 
