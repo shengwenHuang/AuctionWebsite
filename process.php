@@ -38,14 +38,11 @@
       else {
         // Else check that the password provided in the login attempt matches that of the selected user.
           if(password_verify($_POST["password"],$result["password"])) {
-          // remove all session variables
-          // session_unset();
-          // session_destroy();
-          // session_start();
           // to change a session variable, just overwrite it
           $_SESSION["username"] = "$username";
           $_SESSION["userID"] = $dbHelper ->fetch_user_id_from_username($username);
-          // echo "<p>" . $_SESSION['userID'] . "hello </p>";
+
+          $dbHelper->gen_reco_item($_SESSION["userID"]);
           message_and_move("Successfully logged in to your account!", "homepage.php");
           
         } else {

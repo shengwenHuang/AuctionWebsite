@@ -5,7 +5,7 @@
   require "dbHelper.php";
   $dbHelper = new DBHelper($_SESSION["userID"]);
   require "header.php";
-  $dbHelper->gen_reco_item();
+  
 ?>
 
 <!doctype html>
@@ -62,9 +62,9 @@
     $recommendations = $dbHelper->fetch_recommendations();
     if ($recommendations) {
       // Get the highest bid for each item auction that was returned
-      for ($i = 0; $i < count($raw_results); $i++) {
-        $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($raw_results[$i]["auctionID"]);
-        $raw_results[$i] = array_merge($raw_results[$i], $highestBidInfo);
+      for ($i = 0; $i < count($recommendations); $i++) {
+        $highestBidInfo = $dbHelper->fetch_max_bid_for_auction($recommendations[$i]["auctionID"]);
+        $recommendations[$i] = array_merge($recommendations[$i], $highestBidInfo);
       
       }
        

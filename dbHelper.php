@@ -673,42 +673,43 @@ class DBHelper
         $query->execute(array($userID, $auctionID));
     }
 
-    public function fetch_reccomendations () {
+    public function fetch_recommendations () {
         $query = $this->dbconnection->prepare(
-            "SELECT itemName, description, startprice, reserveprice, startDatetime, endDatetime, dateOfReccomendation, auctionID
-            FROM reccomendations, items, auctions
+            "SELECT itemName, description, startPrice, reservePrice, startDatetime, endDatetime, dateOfRecommendation, auctionID
+            FROM recommendations, items, auctions
             WHERE userID = ?
-            AND itemReccomendation = items.itemID
+            AND itemRecommendation = items.itemID
             AND items.itemID = auctions.itemID
-            ORDER by dateOfReccomendation DESC
+            ORDER by dateOfRecommendation DESC
             LIMIT 5"
         );
-        $query->execute(array($this->$userID));
-        return $query->fetch_all();
+        $query->execute(array($this->userID));
+        return $query->fetchall();
     }
 
     function gen_reco_item($userID) {
         $query = $this->dbconnection->prepare(
-            "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberofbids
+            "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberOfBids
             FROM itemcategories, bids, auctions
             WHERE auctions.auctionID = bids.auctionID
             AND auctions.itemID = itemcategories.itemID
             AND bids.userID = ?
             GROUP BY itemcategories.CategoryID
-            ORDER BY 'numberofbids' DESC");
+            ORDER BY 'numberOfBids' DESC");
         $query->execute(array($userID));
         
         if ($query->rowCount() == 0) {
             return;
         }
         $rows = $query->fetchall();
+        
         // Filter the returned list of rows so that it only contains the ones with the
         // highest number of bids
-        $reco_categoryID = filter_highest_value($rows, "categoryID");
+        $reco_categoryID = $this->filter_highest_value($rows, "categoryID");
         // Return a list of category IDs by number of bids (From the database)
         $query = $this->dbconnection->prepare(
             'SELECT i.itemID, COUNT(b.bidID) as numberOfBids
-            FROM items as i, bids as b auctions as a, itemCatetories ic
+            FROM items as i, bids as b, auctions as a, itemCategories as ic
             WHERE b.auctionID = a.auctionID
             AND a.itemID = ic.itemID
             AND i.itemID = ic.itemID
@@ -720,7 +721,9 @@ class DBHelper
             return;
         }
         $rows = $query->fetchall();
-        $reco_itemID = filter_highest_value($rows, "itemID");
+        
+        $reco_itemID = $this->filter_highest_value($rows, "itemID");
+        
         try {
             $query = $this->dbconnection->prepare('INSERT INTO recommendations (userID, itemRecommendation, dateOfRecommendation) values (?, ?, ?)');
             $query->execute(array($userID, $reco_itemID, date("Y-m-d H:i:s")));
