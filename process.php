@@ -260,7 +260,7 @@
     $bidDatetime = date("Y-m-d H:i:s");
     // Try to add the new bid to the table
     try {
-      $dbHelper->sendEmailifOutbid($auctionID);
+      $dbHelper->sendEmailToBidder($auctionID);
       $result = $dbHelper->insert_new_bid($userID, $auctionID, $bidAmount, $bidDatetime);
     } catch (PDOException $e) {
       $message = "Error connecting to MySQL: " . $e->getMessage() . (int)$e->getCode();
