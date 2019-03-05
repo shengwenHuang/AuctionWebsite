@@ -376,20 +376,6 @@ class DBHelper
         return $row["categoryID"];
     }
     
-    public function fetch_auctionID_from_bids($userID){
-        $query = $this->dbconnection->prepare(
-            "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberofbids
-            FROM itemcategories, bids, auctions
-            WHERE auctions.auctionID = bids.auctionID
-            AND auctions.itemID = itemcategories.itemID
-            AND bids.userID = ?
-            GROUP BY itemcategories.CategoryID
-            ORDER BY 'numberofbids' DESC");
-        $query->execute(array($userID));
-        $row = $query->fetchall();
-        return $row;
-    }
-    
     public function fetch_all_items_from_categoris($categoryID){
         $query = $this->dbconnection->prepare(
             "SELECT itemID FROM ItemCategories WHERE categoryID = ?");
@@ -701,6 +687,77 @@ class DBHelper
         return $query->fetch_all();
     }
 
+    function gen_reco_item() {
+        $query = $this->dbconnection->prepare(
+            "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberofbids
+            FROM itemcategories, bids, auctions
+            WHERE auctions.auctionID = bids.auctionID
+            AND auctions.itemID = itemcategories.itemID
+            AND bids.userID = ?
+            GROUP BY itemcategories.CategoryID
+            ORDER BY 'numberofbids' DESC");
+        $query->execute(array($this->userID));
+        
+        if ($query->rowCount() == 0) {
+            return;
+        }
+        $rows = $query->fetchall();
+        // Filter the returned list of rows so that it only contains the ones with the
+        // highest number of bids
+        $reco_categoryID = filter_highest_value($rows, "categoryID");
+        // Return a list of category IDs by number of bids (From the database)
+        $query = $this->dbconnection->prepare(
+            'SELECT i.itemID, COUNT(b.bidID) as numberOfBids
+            FROM items as i, bids as b auctions as a, itemCatetories ic
+            WHERE b.auctionID = a.auctionID
+            AND a.itemID = ic.itemID
+            AND i.itemID = ic.itemID
+            AND ic.categoryID = ?
+            GROUP BY i.itemID
+            ORDER BY numberOfBids DESC');
+        $query->execute(array($reco_categoryID));
+        if ($query->rowCount() == 0) {
+            return;
+        }
+        $rows = $query->fetchall();
+        $reco_itemID = filter_highest_value($rows, "itemID");
+        try {
+            $query = $this->dbconnection->prepare('INSERT INTO recommendations (userID, itemRecommendation, dateOfRecommendation) values (?, ?, ?)');
+            $query->execute(array($this->userID, $reco_itemID, date("Y-m-d H:i:s")));
+        } catch (PDOException $e) {
+            return;
+        }
+
+    }
+
+    function filter_highest_value ($rows, $IDName) {
+        $highestResults = array();
+        foreach ($rows as $row) {
+            if (sizeof($highestResults) == 0) {
+                array_push($highestResults, $row);
+            } else {
+                $bidNumber = $row["numberOfBids"];
+                $currentHighest = $highestResults[0]["numberOfBids"];
+
+                if ($bidNumber > $currentHighest) {
+                    $highestResults = array();
+                    array_push($highestResults, $row);
+                } else if ($bidNumber == $currentHighest) {
+                    array_push($highestResults, $row);
+                }
+            }
+        }
+        // If the final array only contains one value, return its categoryID, otherwise
+        // generate a random index for the array and then return the categoryID for that
+        // random row
+        $arraySize = sizeof($highestResults);
+        if ($arraySize > 1) {
+            $randomIndex = rand(0, $arraySize-1);
+            return $highestResults[$randomIndex][$IDName];
+        } else {
+            return $highestResults[0][$IDName];
+        }
+    }
     /**
      * Destroy the database connection when the object is no longer required
      *
