@@ -497,12 +497,13 @@ class DBHelper
             ORDER BY bidAmount DESC
             LIMIT 1)"
         );
-        ob_start();
+        
         $query->execute(array($auctionID));
-        $row = $query->fetch();
-        if (!isset($row)) {
+        
+        if ($query->rowCount() == 0) {
             return;
         }
+        $row = $query->fetch();
         $userID = $row['userID'];
         $username = $row['username'];
         $email = $row['email'];
@@ -560,7 +561,7 @@ class DBHelper
         //Attach an image file
         // $mail->addAttachment('images/phpmailer_mini.png');
         //send the message, check for errors
-        ob_end_clean();
+        
         if (!$mail->send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -584,20 +585,23 @@ class DBHelper
             "SELECT a.auctionID FROM auctions as a WHERE a.endDatetime < now() AND a.endDatetime > addtime(now(), '-01:00')"
         );
         $query->execute();
-        $closedAuctions = $query->fetchall();
+        
 
-        if ($closedAuctions->rowCount() > 0) {
+        if ($query->rowCount() > 0) {
+            $closedAuctions = $query->fetchall();
             foreach ($closedAuctions as $auction) {
                 $auctionID = $auction["auctionID"];
-                sendEmailifOutbid($auctionID, true);
-                sendEmailtoSellerAtAuctionEnd($auctionID);
+                $this->sendEmailToBidder($auctionID, true);
+                $this->sendEmailtoSellerAtAuctionEnd($auctionID);
             }
         }
     }
 
     public function sendEmailToSellerAtAuctionEnd ($auctionID) {
+        echo "<p>we're in the function</p>";
+        echo $auctionID;
         $query = $this->dbconnection->prepare(
-            "SELECT username, email, userID
+            "SELECT username, email, users.userID
             FROM users, items, auctions, bids
             WHERE auctions.auctionID = ?
             AND auctions.itemID = items.itemID
@@ -605,18 +609,34 @@ class DBHelper
             AND auctions.auctionID = bids.auctionID
             LIMIT 1"
         );
-        ob_start();
         $query->execute(array($auctionID));
-        $row = $query->fetch();
-        $userID = $row['userID'];
-        $username = $row['username'];
-        $email = $row['email'];
-
-        if (isset($row)) {
+        
+       
+        if ($query->rowCount() > 0) {
+            $row = $query->fetch();
+            echo "<p>if statement</p>";
+            $userID = $row['userID'];
+            $username = $row['username'];
+            $email = $row['email'];
             $subj = 'Congratulations, your item Sold!';
             $msg = '<p>Hi ' . $username . '</p><p>Your item sold! Auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your sale</p>';
         }
         else{
+            echo "<p>else statement statement</p>";
+            $query = $this->dbconnection->prepare(
+                "SELECT username, email, users.userID
+                FROM users, items, auctions, bids
+                WHERE auctions.auctionID = ?
+                AND auctions.itemID = items.itemID
+                AND items.sellerID = users.userID
+                LIMIT 1"
+            );
+            
+            $query->execute(array($auctionID));
+            $row = $query->fetch();
+            $userID = $row['userID'];
+            $username = $row['username'];
+            $email = $row['email'];
             $subj = 'Commiserations, your item didn\'t sell';
             $msg = '<p>Hi ' . $username . '</p><p>Your item didn\'t sell. Auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your item</p>';
         }
@@ -663,7 +683,6 @@ class DBHelper
         //Attach an image file
         // $mail->addAttachment('images/phpmailer_mini.png');
         //send the message, check for errors
-        ob_end_clean();
         if (!$mail->send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
