@@ -3,7 +3,7 @@
   
   require "redirectIfNotLoggedIn.php";
   require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
+  $dbHelper = new DBHelper($_SESSION["userID"]);
   require "header.php";
 ?>
 
