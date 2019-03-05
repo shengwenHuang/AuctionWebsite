@@ -687,7 +687,7 @@ class DBHelper
         return $query->fetch_all();
     }
 
-    function gen_reco_item() {
+    function gen_reco_item($userID) {
         $query = $this->dbconnection->prepare(
             "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberofbids
             FROM itemcategories, bids, auctions
@@ -696,7 +696,7 @@ class DBHelper
             AND bids.userID = ?
             GROUP BY itemcategories.CategoryID
             ORDER BY 'numberofbids' DESC");
-        $query->execute(array($this->userID));
+        $query->execute(array($userID));
         
         if ($query->rowCount() == 0) {
             return;
@@ -723,7 +723,7 @@ class DBHelper
         $reco_itemID = filter_highest_value($rows, "itemID");
         try {
             $query = $this->dbconnection->prepare('INSERT INTO recommendations (userID, itemRecommendation, dateOfRecommendation) values (?, ?, ?)');
-            $query->execute(array($this->userID, $reco_itemID, date("Y-m-d H:i:s")));
+            $query->execute(array($userID, $reco_itemID, date("Y-m-d H:i:s")));
         } catch (PDOException $e) {
             return;
         }

@@ -5,6 +5,7 @@
   require "dbHelper.php";
   $dbHelper = new DBHelper($_SESSION["userID"]);
   require "header.php";
+  $dbHelper->gen_reco_item();
 ?>
 
 <!doctype html>
