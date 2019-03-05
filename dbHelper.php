@@ -381,7 +381,7 @@ class DBHelper
             "SELECT auctionID FROM bids WHERE userID = ?");
         $query->execute(array($userID));
         $row = $query->fetch();
-        return $row["auctionID"];
+        return $row;
     }
     
     public function fetch_itemid_from_auctions($auctionID){
