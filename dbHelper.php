@@ -376,33 +376,6 @@ class DBHelper
         return $row["categoryID"];
     }
     
-    public function fetch_auctionID_from_bids($userID){
-        $query = $this->dbconnection->prepare(
-            "SELECT auctionID FROM bids WHERE userID = ?");
-        $query->execute(array($userID));
-        $row = $query->fetch();
-        return $row;
-    }
-    
-    public function fetch_itemid_from_auctions($auctionID){
-        $query = $this->dbconnection->prepare(
-            "SELECT itemID FROM auctions WHERE auctionID = ?");
-        $query->execute(array($auctionID));
-        $row = $query->fetch();
-        return $row["itemID"];
-    }
-    
-    public function fetch_favorite_categories($itemID){
-        $query = $this->dbconnection->prepare(
-            "SELECT categoryID FROM itemCategories WHERE itemID = ?");
-        $query->execute(array($itemID));
-        $row = $query->fetch();
-        $array = $row["categoryID"];
-        $values = array_count_values($array);
-        arsort($values);
-        return array_slice(array_keys($values), 0, 1, true);
-    }
-    
     public function fetch_all_items_from_categoris($categoryID){
         $query = $this->dbconnection->prepare(
             "SELECT itemID FROM ItemCategories WHERE categoryID = ?");
@@ -469,7 +442,7 @@ class DBHelper
         else {
             // If a category was selected, search by query string and category name
             $query = $this->dbconnection->prepare(
-                "SELECT a.auctionID, DISTINCT i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
+                "SELECT a.auctionID, i.itemName, i.description, a.startPrice, a.reservePrice, a.startDatetime, a.endDatetime
                 FROM items as i, auctions as a, itemCategories as ic, categories as c
                 WHERE a.itemID = i.itemID
                 AND i.itemID = ic.itemID
@@ -497,12 +470,13 @@ class DBHelper
             ORDER BY bidAmount DESC
             LIMIT 1)"
         );
-        ob_start();
+        
         $query->execute(array($auctionID));
-        $row = $query->fetch();
-        if (!isset($row)) {
+        
+        if ($query->rowCount() == 0) {
             return;
         }
+        $row = $query->fetch();
         $userID = $row['userID'];
         $username = $row['username'];
         $email = $row['email'];
@@ -560,7 +534,7 @@ class DBHelper
         //Attach an image file
         // $mail->addAttachment('images/phpmailer_mini.png');
         //send the message, check for errors
-        ob_end_clean();
+        
         if (!$mail->send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -584,20 +558,23 @@ class DBHelper
             "SELECT a.auctionID FROM auctions as a WHERE a.endDatetime < now() AND a.endDatetime > addtime(now(), '-01:00')"
         );
         $query->execute();
-        $closedAuctions = $query->fetchall();
+        
 
-        if ($closedAuctions->rowCount() > 0) {
+        if ($query->rowCount() > 0) {
+            $closedAuctions = $query->fetchall();
             foreach ($closedAuctions as $auction) {
                 $auctionID = $auction["auctionID"];
-                sendEmailifOutbid($auctionID, true);
-                sendEmailtoSellerAtAuctionEnd($auctionID);
+                $this->sendEmailToBidder($auctionID, true);
+                $this->sendEmailtoSellerAtAuctionEnd($auctionID);
             }
         }
     }
 
     public function sendEmailToSellerAtAuctionEnd ($auctionID) {
+        echo "<p>we're in the function</p>";
+        echo $auctionID;
         $query = $this->dbconnection->prepare(
-            "SELECT username, email, userID
+            "SELECT username, email, users.userID
             FROM users, items, auctions, bids
             WHERE auctions.auctionID = ?
             AND auctions.itemID = items.itemID
@@ -605,18 +582,34 @@ class DBHelper
             AND auctions.auctionID = bids.auctionID
             LIMIT 1"
         );
-        ob_start();
         $query->execute(array($auctionID));
-        $row = $query->fetch();
-        $userID = $row['userID'];
-        $username = $row['username'];
-        $email = $row['email'];
-
-        if (isset($row)) {
+        
+       
+        if ($query->rowCount() > 0) {
+            $row = $query->fetch();
+            echo "<p>if statement</p>";
+            $userID = $row['userID'];
+            $username = $row['username'];
+            $email = $row['email'];
             $subj = 'Congratulations, your item Sold!';
             $msg = '<p>Hi ' . $username . '</p><p>Your item sold! Auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your sale</p>';
         }
         else{
+            echo "<p>else statement statement</p>";
+            $query = $this->dbconnection->prepare(
+                "SELECT username, email, users.userID
+                FROM users, items, auctions, bids
+                WHERE auctions.auctionID = ?
+                AND auctions.itemID = items.itemID
+                AND items.sellerID = users.userID
+                LIMIT 1"
+            );
+            
+            $query->execute(array($auctionID));
+            $row = $query->fetch();
+            $userID = $row['userID'];
+            $username = $row['username'];
+            $email = $row['email'];
             $subj = 'Commiserations, your item didn\'t sell';
             $msg = '<p>Hi ' . $username . '</p><p>Your item didn\'t sell. Auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your item</p>';
         }
@@ -663,7 +656,6 @@ class DBHelper
         //Attach an image file
         // $mail->addAttachment('images/phpmailer_mini.png');
         //send the message, check for errors
-        ob_end_clean();
         if (!$mail->send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -681,12 +673,50 @@ class DBHelper
         $query->execute(array($userID, $auctionID));
     }
 
-    
-    function dummy() {
-        $rows = array(); // Return a list of category IDs by number of bids (From the database)
-
+    function gen_reco_category() {
+        $query = $this->dbconnection->prepare(
+            "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberofbids
+            FROM itemcategories, bids, auctions
+            WHERE auctions.auctionID = bids.auctionID
+            AND auctions.itemID = itemcategories.itemID
+            AND bids.userID = ?
+            GROUP BY itemcategories.CategoryID
+            ORDER BY 'numberofbids' DESC");
+        $query->execute(array($this->userID));
+        
+        if ($query->rowCount() == 0) {
+            return;
+        }
+        $rows = $query->fetchall();
         // Filter the returned list of rows so that it only contains the ones with the
         // highest number of bids
+        $reco_categoryID = filter_highest_value($rows, "categoryID");
+        // Return a list of category IDs by number of bids (From the database)
+        $query = $this->dbconnection->prepare(
+            'SELECT i.itemID, COUNT(b.bidID) as numberOfBids
+            FROM items as i, bids as b auctions as a, itemCatetories ic
+            WHERE b.auctionID = a.auctionID
+            AND a.itemID = ic.itemID
+            AND i.itemID = ic.itemID
+            AND ic.categoryID = ?
+            GROUP BY i.itemID
+            ORDER BY numberOfBids DESC');
+        $query->execute(array($reco_categoryID));
+        if ($query->rowCount() == 0) {
+            return;
+        }
+        $rows = $query->fetchall();
+        $reco_itemID = filter_highest_value($rows, "itemID");
+        try {
+            $query = $this->dbconnection->prepare('INSERT INTO recommendations (userID, itemRecommendation, dateOfRecommendation) values (?, ?, ?)');
+            $query->execute(array($this->userID, $reco_itemID, date("Y-m-d H:i:s"));
+        } catch (PDOException $e) {
+            return;
+        }
+
+    }
+
+    function filter_highest_value ($rows, $IDName) {
         $highestResults = array();
         foreach ($rows as $row) {
             if (sizeof($highestResults) == 0) {
@@ -703,19 +733,17 @@ class DBHelper
                 }
             }
         }
-
         // If the final array only contains one value, return its categoryID, otherwise
         // generate a random index for the array and then return the categoryID for that
         // random row
         $arraySize = sizeof($highestResults);
         if ($arraySize > 1) {
             $randomIndex = rand(0, $arraySize-1);
-            return $highestResults[$randomIndex]["categoryID"];
+            return $highestResults[$randomIndex][$IDName];
         } else {
-            return $highestResults[0]["categoryID"];
+            return $highestResults[0][$IDName];
         }
     }
-
     /**
      * Destroy the database connection when the object is no longer required
      *
