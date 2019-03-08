@@ -66,14 +66,28 @@ class DBHelper
         return $query->execute(array($username, $password, $email));
     }
 
-    public function fetch_auctions_by_user()
+    // public function fetch_auctions_by_user()
+    // {
+    //     if (isset($this->userID)) {
+    //         $query = $this->dbconnection->prepare("SELECT DISTINCT(auctionID) FROM bids WHERE userID = ?");
+    //         $query->execute(array($this->userID));
+    //         return $query->fetchall();
+    //     }
+    // }
+
+    public function fetch_future_auctions_by_user()
     {
         if (isset($this->userID)) {
-            $query = $this->dbconnection->prepare("SELECT DISTINCT(auctionID) FROM bids WHERE userID = ?");
+            $query = $this->dbconnection->prepare("SELECT DISTINCT(bids.auctionID) 
+                                                   FROM bids, auctions
+                                                   WHERE userID = ?
+                                                   AND bids.auctionID = auctions.auctionID
+                                                   AND auctions.endDateTime > now()");
             $query->execute(array($this->userID));
             return $query->fetchall();
         }
     }
+
 
     public function fetch_listing_by_user_auction($auctionID)
     {
@@ -95,7 +109,6 @@ class DBHelper
                 FROM items AS i, auctions AS a, bids AS b
                 WHERE b.userID = ?
                 AND b.auctionID = ?
-                AND a.endDatetime > now()
                 AND i.itemID = a.itemID
                 AND a.auctionID = b.auctionID
                 ORDER BY yourBid DESC"
@@ -147,7 +160,7 @@ class DBHelper
                 FROM items as i, auctions as a, bids as b
                 WHERE b.auctionID = a.auctionID
                 AND a.itemID = i.itemID
-                AND a.endDatetime < now()
+                -- AND a.endDatetime < now()
                 AND b.userID = ?"
             );
 
@@ -162,20 +175,6 @@ class DBHelper
                 }
             }
             return $toReturn;
-
-
-            // "SELECT i.itemName, i.description, b.bidAmount AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
-            //     FROM items AS i, auctions AS a, bids AS b
-            //     WHERE b.userID = ?
-            //     AND b.auctionID = ?
-            //     AND a.endDatetime > now()
-            //     AND i.itemID = a.itemID
-            //     AND a.auctionID = b.auctionID
-            //     ORDER BY yourBid DESC"
-
-
-            // $query->execute(array($this->userID));
-            // return $query->fetchall();
         }
     }
 
@@ -196,6 +195,32 @@ class DBHelper
             return $query->fetchall();
         }
     }
+
+    // public function fetch_purchase_history()
+    // {
+    //     if (isset($this->userID)) {
+    //         $query = $this->dbconnection->prepare(
+    //             "SELECT b.auctionID, i.itemName, i.description, a.endDatetime as purchaseDate, i.sellerID, b.bidAmount
+    //             FROM items as i, auctions as a, bids as b
+    //             WHERE b.auctionID = a.auctionID
+    //             AND a.itemID = i.itemID
+    //             AND a.endDatetime < now()
+    //             AND b.userID = ?"
+    //         );
+
+    //         $query->execute(array($this->userID));
+    //         $result = $query->fetchall();
+
+    //         $toReturn = array();
+    //         foreach ($result as $row) {
+    //             $res = ($this->fetch_max_bid_for_auction($row['auctionID']));
+    //             if ($res['highestBid'] == $row['bidAmount']) {
+    //                 array_push($toReturn, $row);
+    //             }
+    //         }
+    //         return $toReturn;
+    //     }
+    // }
 
     public function fetch_your_listing()
     {
