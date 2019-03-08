@@ -34,14 +34,10 @@
             foreach ($auctionArray as $auction) {
                 $returnedRow = $dbHelper->fetch_listing_by_user_auction($auction["auctionID"]);
                 if ($returnedRow) {
-                    // echo "hello";
-                    // echo print_r($returnedRow);
                     array_push($rowData, $returnedRow);
                 }
                 
             }
-            // echo print_r($rowData);
-            // echo print_r($auctionArray);
             
             // Retrieve the current maximum bid for each given auction and append this to the corresponding row in
             // the rowData array
@@ -75,8 +71,6 @@
 
             // Populate the table with the row data
             foreach ($rowData as $row) {
-                print("<p>" . $row["endDatetime"] . "</p>");
-                
                     echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
                           <td>" . $row["itemName"] . "</td> 
                           <td>" . $row["description"] . "</td> 
