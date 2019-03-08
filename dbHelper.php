@@ -160,7 +160,7 @@ class DBHelper
                 FROM items as i, auctions as a, bids as b
                 WHERE b.auctionID = a.auctionID
                 AND a.itemID = i.itemID
-                -- AND a.endDatetime < now()
+                AND a.endDatetime < now()
                 AND b.userID = ?"
             );
 
@@ -184,9 +184,9 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as saleDate, p.buyerID
-                FROM items as i, auctions as a, purchaseHistory as p
-                WHERE p.auctionID = a.auctionID
+                "SELECT a.auctionID, i.itemName, i.description, a.endDatetime as saleDate
+                FROM items as i, auctions as a, bids as b
+                WHERE b.auctionID = a.auctionID
                 AND a.itemID = i.itemID
                 AND a.endDatetime < now()
                 AND i.sellerID = ?"
