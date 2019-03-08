@@ -152,7 +152,7 @@
               // Else check that the password provided in the login attempt matches that of the selected user.
               if(password_verify($_POST["password"],$result["password"])) {
                 $result = $dbHelper->update_email($email,$username);
-                message_and_move("Email changed successfully! " . $_SESSION["username"], "updateAccount.php");
+                message_and_move("Email changed successfully!", "updateAccount.php");
               } else {
                 message_and_move("Incorrect password provided, please try again", "ChangeEmail.php");
               }
@@ -191,7 +191,7 @@
                 // Else check that the password provided in the login attempt matches that of the selected user.
                     if(password_verify($_POST["password"],$result["password"])) {
                         $result = $dbHelper->change_password($newpassword1,$username);
-                            message_and_move("Password changed successfully! " . $_SESSION["username"], "updateAccount.php");
+                            message_and_move("Password changed successfully!", "updateAccount.php");
                     } else {
                         message_and_move("Incorrect password provided, please try again", "ChangePassword.php");
                     }

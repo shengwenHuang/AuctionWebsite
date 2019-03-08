@@ -20,10 +20,14 @@
 
         <div id="user-input">
             <form method="post" action="process.php">
-                Validate your current username:<input type="text" name="username" placeholder="Enter your username"> <br />
-                Validate your current password:<input type="password" name="password" placeholder="Enter your password"> <br />
-                Enter the new email address:<input type="email" name="newemail" placeholder="Enter your new Email address"> <br />
-                <input id="change-email" type="submit" name="change-email" value="submit" />
+                <label for="validate">Validate your login details</label>
+                <div id="validate" style="margin-bottom: 10px">
+                    <input type="text" name="username" style="display: block" placeholder="Enter your username">
+                    <input type="password" name="password" style="display: block" placeholder="Enter your password">
+                </div>
+                <label for="email">Enter your new email address</label>
+                <input type="email" name="newemail" style="display: block; margin-bottom: 10px" placeholder="New email address...">
+                <input id="change-email" type="submit"  name="change-email" style="display: block; font-size: 1.25em" value="Submit"/>
             </form>
             <?php if (isset($_GET['message'])) : ?>
             <div class="error">

@@ -16,14 +16,8 @@
 <body>
   <div id="body-content">
     <header>
-        <h1>Welcome!</h1> 
       <?php if (isset($_GET['message'])): ?>
-      <?php echo $_SESSION["username"]; ?>
-      <div class="error">
-        <h1>
-          <?php echo $_GET['message']; ?>
-        </h1>
-      </div>
+        <h1><?php echo $_GET['message']; ?></h1>
       <?php endif;?>
     </header>
   </div>
@@ -32,7 +26,7 @@
     //show username and email address
     $username = $_SESSION["username"];
     $email = $dbHelper->fetch_user_email_from_username($username);
-    echo "Username: ",$_SESSION["username"],"<br/>","Email address: ",$email;
+    echo "Username: ". $_SESSION["username"] . "<br/> Email address: " . $email;
   ?>
 
   <!--change password and email address-->
