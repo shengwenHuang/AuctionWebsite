@@ -705,6 +705,7 @@ class DBHelper
             WHERE userID = ?
             AND itemRecommendation = items.itemID
             AND items.itemID = auctions.itemID
+            AND auctions.endDatetime > now()
             ORDER by dateOfRecommendation DESC
             LIMIT 5"
         );
@@ -739,6 +740,7 @@ class DBHelper
             AND a.itemID = ic.itemID
             AND i.itemID = ic.itemID
             AND ic.categoryID = ?
+            AND a.endDatetime > now()
             GROUP BY i.itemID
             ORDER BY numberOfBids DESC');
         $query->execute(array($reco_categoryID));
