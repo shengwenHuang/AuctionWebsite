@@ -1,5 +1,4 @@
 tr {
-    max-width: 100%;
     cursor: pointer;
 }
 
@@ -11,8 +10,6 @@ table {
 
 table td,
 table th {
-    max-width: 20%;
-    word-wrap: break-word;
     border: 1px solid #ddd;
     padding: 8px;
 }
