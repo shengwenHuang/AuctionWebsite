@@ -23,7 +23,7 @@
         require "filterDropDown.php";
 
         // Retrieve a list of distinct auctionIDs that the current user has bid on
-        $auctionArray = $dbHelper->fetch_auctions_by_user();
+        $auctionArray = $dbHelper->fetch_future_auctions_by_user();
 
         if ($auctionArray) {
             // Initialise an empty array for the displayed table's row data
@@ -34,8 +34,6 @@
             foreach ($auctionArray as $auction) {
                 $returnedRow = $dbHelper->fetch_listing_by_user_auction($auction["auctionID"]);
                 if ($returnedRow) {
-                    // echo "hello";
-                    // echo print_r($returnedRow);
                     array_push($rowData, $returnedRow);
                 }
                 
@@ -72,14 +70,16 @@
             </tr>";
 
             // Populate the table with the row data
-            foreach ($rowData as $row) {         
-                echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
+            foreach ($rowData as $row) {
+                    echo "<tr class='table-row' data-href='itemAuction.php?auctionID=" . $row["auctionID"] . "'>
                           <td>" . $row["itemName"] . "</td> 
                           <td>" . $row["description"] . "</td> 
                           <td>£" . number_format($row["yourBid"]/100, 2) . " (" . $row["yourBiddt"] . ")</td> 
                           <td>£" . number_format($row["highestBid"]/100, 2) . " (" . $row["highestBiddt"] . ")</td> 
                           <td>" . $row["endDatetime"] . "</td>
                       </tr>";
+                        
+                
             }
 
             // Free up the memory used by the array

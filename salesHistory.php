@@ -47,8 +47,7 @@
                 <th>Item Name</th> 
                 <th>Item Description</th> 
                 <th>Sale Datetime</th> 
-                <th>Sale Price</th> 
-                <th>Buyer ID</th> 
+                <th>Sale Price</th>
             </tr>";
 
             // Populate the table with the row data
@@ -58,7 +57,6 @@
                           <td>" . $row["description"] . "</td> 
                           <td>" . $row["saleDate"] . "</td>
                           <td>£" . number_format($row["highestBid"]/100, 2) . "</td>
-                          <td>" . $row["buyerID"] . "</td>
                       </tr>";
             }
 
