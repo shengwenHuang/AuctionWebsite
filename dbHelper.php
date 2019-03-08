@@ -687,7 +687,7 @@ class DBHelper
         return $query->fetchall();
     }
 
-    function gen_reco_item($userID) {
+    public function gen_reco_item($userID) {
         $query = $this->dbconnection->prepare(
             "SELECT itemcategories.categoryID , COUNT(bids.bidID) AS numberOfBids
             FROM itemcategories, bids, auctions
@@ -733,7 +733,7 @@ class DBHelper
 
     }
 
-    function filter_highest_value ($rows, $IDName) {
+    private function filter_highest_value ($rows, $IDName) {
         $highestResults = array();
         foreach ($rows as $row) {
             if (sizeof($highestResults) == 0) {
@@ -761,6 +761,32 @@ class DBHelper
             return $highestResults[0][$IDName];
         }
     }
+
+    public function check_watch_item($auctionID)
+    {
+        $query = $this->dbconnection->prepare(
+            "SELECT watchID FROM watchList WHERE userID = ? AND auctionID = ?"
+        );
+        $query->execute(array($this->userID, $auctionID));
+        return $query->fetch();
+    }
+
+    public function add_watch_item($auctionID)
+    {
+        $query = $this->dbconnection->prepare(
+            "INSERT INTO watchList (userID, auctionID) VALUES (?, ?)"
+        );
+        return $query->execute(array($this->userID, $auctionID));
+    }
+
+    public function remove_watch_item($auctionID)
+    {
+        $query = $this->dbconnection->prepare(
+            "DELETE FROM watchlist WHERE userID = ? AND auctionID = ?"
+        );
+        return $query->execute(array($this->userID, $auctionID));
+    }
+
     /**
      * Destroy the database connection when the object is no longer required
      *

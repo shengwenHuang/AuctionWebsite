@@ -270,7 +270,7 @@
       //// add code here
       // header_remove();
       // message_and_move("Direct access not permitted, redirected to login", "itemAuction.php");
-// . "&auctionID=" . $auctionID
+      // . "&auctionID=" . $auctionID
       $message = "Bid was made successfully";
       echo '<script type="text/javascript">window.location = "itemAuction.php?message=' . urlencode($message). '&auctionID=' . $auctionID . '"</script>';
       // header("Location: " . "http://localhost:8888/itemAuction.php" . "?message=" . urlencode($message). "&auctionID=" . $auctionID);
@@ -301,10 +301,38 @@
     // If query length is ltoo short, show an error message on the homepage screen
     message_and_move("Invalid query string: must be at least 3 characters", "homepage.php");
   }
+} elseif (isset($_POST["item-watch"])) {
+  // Add item to user's watch list
+  $auctionID = $_POST["auctionID"];
+
+  try {
+    $result = $dbHelper->add_watch_item($auctionID);
+  } catch (PDOException $e) {
+    $message = "Error occurred adding the item to your watchlist, item was not added" . $e->getMessage() . (int)$e->getCode();
+    header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    exit();
+  }
+
+  $message = "Successfully added item to your watch list";
+  header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+  exit();
+} elseif (isset($_POST["item-watch-remove"])) {
+  // Remove auction from user's watch list
+  $auctionID = $_POST["auctionID"];
+
+  try {
+    $result = $dbHelper->remove_watch_item($auctionID);
+  } catch (PDOException $e) {
+    $message = "Error occurred removing the item from your watchlist, item was not added" . $e->getMessage() . (int)$e->getCode();
+    header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+    exit();
+  }
+
+  $message = "Successfully removed item from your watch list";
+  header("Location: " . "itemAuction.php" . "?message=" . urlencode($message) . "&auctionID=" . $auctionID);
+  exit();
 } else {
   // The HTTP header does not reference a recognised button, so return an error to the index page.
   message_and_move("Direct access not permitted, redirected to login", "index.php");
 }
-
-
 ?>
