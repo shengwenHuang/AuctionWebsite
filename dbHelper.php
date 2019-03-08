@@ -184,7 +184,7 @@ class DBHelper
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT a.auctionID, i.itemName, i.description, a.endDatetime as saleDate
+                "SELECT distinct a.auctionID, i.itemName, i.description, a.endDatetime as saleDate
                 FROM items as i, auctions as a, bids as b
                 WHERE b.auctionID = a.auctionID
                 AND a.itemID = i.itemID
