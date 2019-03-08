@@ -16,7 +16,7 @@
 <body>
   <div id="body-content">
     <header>
-      <?php echo "welcome "; ?>
+        <h1>Welcome!</h1> 
       <?php if (isset($_GET['message'])): ?>
       <?php echo $_SESSION["username"]; ?>
       <div class="error">
