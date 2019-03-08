@@ -4,6 +4,7 @@
   require "redirectIfNotLoggedIn.php";
   require "dbHelper.php";
   $dbHelper = new DBHelper(null);
+  require "header.php";
 ?>
 <!doctype html>
 <html>
@@ -19,9 +20,9 @@
 
         <div id="user-input">
             <form method="post" action="process.php">
-                <input type="text" name="username" placeholder="Enter your username"> <br />
-                <input type="password" name="password" placeholder="Enter your password"> <br />
-                <input type="email" name="newemail" placeholder="Enter your new Email address"> <br />
+                Validate your current username:<input type="text" name="username" placeholder="Enter your username"> <br />
+                Validate your current password:<input type="password" name="password" placeholder="Enter your password"> <br />
+                Enter the new email address:<input type="email" name="newemail" placeholder="Enter your new Email address"> <br />
                 <input id="change-email" type="submit" name="change-email" value="submit" />
             </form>
             <?php if (isset($_GET['message'])) : ?>

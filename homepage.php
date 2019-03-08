@@ -91,7 +91,7 @@
           <td>" . $row["startDatetime"] . "</td>
           <td>" . $row["endDatetime"] . "</td>
           <td>£" . number_format($row["highestBid"]/100, 2) . "</td>
-          <td>£" . $row["dateOfRecommendation"] . "</td>
+          <td>" . $row["dateOfRecommendation"] . "</td>
         </tr>";
       }
 

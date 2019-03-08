@@ -3,15 +3,20 @@
     
     require "redirectIfNotLoggedIn.php";
     require "dbHelper.php";
-    $dbHelper = new DBHelper(null);
+    $userID = $_SESSION["userID"];
+    $dbHelper = new DBHelper($userID);
     require "header.php";
 
-    $userID = $_SESSION["userID"];
     if (isset($_GET["auctionID"])) {
         $auctionID = $_GET["auctionID"];
         $auction_details = $dbHelper->fetch_item_auction($auctionID);
         $item_categories = $dbHelper->fetch_item_categories($auction_details["itemID"]);
         $max_bid = $dbHelper->fetch_max_bid_for_auction($auctionID);
+
+        // For checking whether certain buttons should be displayed
+        $auctionDt = strtotime($auction_details["endDatetime"]);
+        $currentDateObject = date("Y-m-d H:i:s");
+        $currentDt = strtotime($currentDateObject);
     } else {
         echo "<h1>Error: No auction ID was passed</h1>";
         die();
@@ -22,7 +27,37 @@
 <html>
 
 <!-- Auction page for an item -->
-<body>   
+<body>
+    <?php 
+    // Only show the watch list button if the auction has not or if the user is not the seller
+    if (($currentDt < $auctionDt) && ($userID != $auction_details["sellerID"])):
+        // If the item is already in the user's watch list, show the remove button, otherwise
+        // show the add button
+        if ($dbHelper->check_watch_item($auctionID)): ?>
+        <form action="process.php" method="POST">
+            <input name="auctionID" style="display: none" value="<?php echo $auctionID ?>">
+            <button id="add-watch-btn" name='item-watch-remove' type='submit' style='font-size: 1.25em'>Remove from Watch List</button> 
+        </form>   
+    <?php else: ?>
+        <form action="process.php" method="POST">
+            <input name="auctionID" style="display: none" value="<?php echo $auctionID ?>">
+            <button id="add-watch-btn" name='item-watch' type='submit' style='font-size: 1.25em'>Add to Watch List</button> 
+        </form>
+    <?php endif; 
+    else: 
+        // If the auction has ended or the user is the seller, show them a message to indicate which one
+        if ($currentDt > $auctionDt): ?>
+        <h3 id="message" style="color: red; margin-bottom: 15px">This auction has ended</h3> 
+    <?php else: ?>
+        <h3 id="message" style="color: red; margin-bottom: 15px">This is your item</h3> 
+    <?php endif;
+    endif; ?>
+
+    <?php // Show any error messages that are recieved
+    if (isset($_GET['message'])): ?>
+        <h3 id="message" style="color: red"><?php echo $_GET['message']; ?></h3>
+    <?php endif;?>    
+
     <!-- Item Name -->
     <h1><?php echo $auction_details["itemName"] ?></h1>
 
@@ -58,12 +93,9 @@
             <h2 id="highest-bid" style="margin-right: 15px">Current Highest Bid: £<?php echo number_format($max_bid["highestBid"]/100, 2) ?></h2>
             <p id="total-bids" style="margin-right: 25px">(Total Number of Bids: <?php echo $auction_details["bidsNumber"] ?>)</p>
             <?php 
-                $auctionDt = strtotime($auction_details["endDatetime"]);
-                $currentDateObject = date("Y-m-d H:i:s");
-                $currentDt = strtotime($currentDateObject);
                 // Only display the new bid button if the auction has not ended and the current user is not the seller
                 if (($currentDt < $auctionDt) && ($userID != $auction_details["sellerID"])) {
-                    echo "<button id='new-bid-btn' type='button' style='height: fit-content; margin-right: 25px'>New Bid</button>";
+                    echo "<button id='new-bid-btn' type='button' style='height: fit-content; margin-right: 25px; font-size: 1.25em'>New Bid</button>";
                 }
             ?>
         </div>
@@ -77,21 +109,16 @@
                     <input name="bid-amount" type="number" min="0" step=".01" placeholder="0.00">
                 </div>
                     <div style="text-align: end">
-                        <!-- Empty input fields that are used to pass the auctionID, userID and starting auction amount in the POST request -->
-                        <input name="bid-userID" style="display: none" value="<?php echo $userID ?>">
+                        <!-- Empty input fields that are used to pass the auctionID and starting auction amount in the POST request -->
                         <input name="bid-auctionID" style="display: none" value="<?php echo $auctionID ?>">
                         <input name="bid-startAmount" style="display: none" value="<?php echo $auction_details["startPrice"]?>">
 
-                        <button id="cancel-bid-btn" type="button" style="margin-right: 10px; background-color: red; color: white;">Cancel</button>
-                        <button id="new-bid-btn" name="new-bid-made" type="submit">Make Bid</button>
-                    </div>;
+                        <button id="cancel-bid-btn" type="button" style="margin-right: 10px; background-color: red; color: white; font-size: 1.25em">Cancel</button>
+                        <button id="new-bid-btn" name="new-bid-made" type="submit" style="font-size: 1.25em">Make Bid</button>
+                    </div>
             </form>
         </div>
     </div>
-
-    <?php if (isset($_GET['message'])): ?>
-        <h3 id="message" style="color: red"><?php echo $_GET['message']; ?></h3>
-    <?php endif;?>
 
     <script>
         // When the user clicks on the New Bids button, open the dialog box,
