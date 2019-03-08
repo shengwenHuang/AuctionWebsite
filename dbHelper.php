@@ -46,11 +46,11 @@ class DBHelper
         }
 
         // If the database connection was created successfully, show some basic data about it in HTML script.
-        echo "<p>Success: A working connection to MySQL was made!</p>";
-        echo "<p>The database is: $dbname</p>";
-        echo "<p>The host is: = $dbhost</p>";
-        echo "<p>Host information: " . $this->dbconnection->getAttribute(PDO::ATTR_CONNECTION_STATUS) . "</p>";
-        echo "<p>The database username is: $dbuser</p>";
+        // echo "<p>Success: A working connection to MySQL was made!</p>";
+        // echo "<p>The database is: $dbname</p>";
+        // echo "<p>The host is: = $dbhost</p>";
+        // echo "<p>Host information: " . $this->dbconnection->getAttribute(PDO::ATTR_CONNECTION_STATUS) . "</p>";
+        // echo "<p>The database username is: $dbuser</p>";
     }
 
     public function fetch_user($username)
@@ -596,8 +596,6 @@ class DBHelper
     }
 
     public function sendEmailToSellerAtAuctionEnd ($auctionID) {
-        echo "<p>we're in the function</p>";
-        echo $auctionID;
         $query = $this->dbconnection->prepare(
             "SELECT username, email, users.userID
             FROM users, items, auctions, bids
@@ -612,7 +610,6 @@ class DBHelper
        
         if ($query->rowCount() > 0) {
             $row = $query->fetch();
-            echo "<p>if statement</p>";
             $userID = $row['userID'];
             $username = $row['username'];
             $email = $row['email'];
@@ -620,7 +617,6 @@ class DBHelper
             $msg = '<p>Hi ' . $username . '</p><p>Your item sold! Auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your sale</p>';
         }
         else{
-            echo "<p>else statement statement</p>";
             $query = $this->dbconnection->prepare(
                 "SELECT username, email, users.userID
                 FROM users, items, auctions, bids
