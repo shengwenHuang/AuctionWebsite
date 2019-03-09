@@ -1,7 +1,7 @@
 # COMP0022
 Coursework for COMP0022
 
-I am in!
+I am in
 
 Test change
 
