@@ -330,7 +330,7 @@ class DBHelper
                 FROM items as i, auctions as a, itemCategories as ic, categories as c
                 WHERE a.itemID = i.itemID
                 AND i.itemID = ic.itemID
-                AND ic.itemID = c.categoryID
+                AND ic.categoryID = c.categoryID
                 AND a.endDatetime > now()
                 AND itemName LIKE CONCAT('%',?,'%')
                 AND c.categoryName = ?"

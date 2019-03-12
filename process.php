@@ -108,7 +108,7 @@
         }
         // If the execution of the statement returned true, the insertion was successful. Otherwise, raise an error.
         if ($result) {
-          message_and_move("Success! Added new user to the database" . $password, "index.php");
+          message_and_move("Success! Added new user to the database", "index.php");
         } else {
           message_and_move("Error inserting user into database, user was not added", "registration.php");
         }
