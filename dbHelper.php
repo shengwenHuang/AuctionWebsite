@@ -135,67 +135,23 @@ class DBHelper
         return $rows;
     }
 
-    // This is the old fetch_purchase_history(), a new one (below) queries the bids table instead
-    // public function fetch_purchase_history()
-    // {
-    //     if (isset($this->userID)) {
-    //         $query = $this->dbconnection->prepare(
-    //             "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as purchaseDate, i.sellerID
-    //             FROM items as i, auctions as a, purchaseHistory as p
-    //             WHERE p.auctionID = a.auctionID
-    //             AND a.itemID = i.itemID
-    //             AND a.endDatetime < now()
-    //             AND p.buyerID = ?"
-    //         );
-    //         $query->execute(array($this->userID));
-    //         return $query->fetchall();
-    //     }
-    // }
-
     public function fetch_purchase_history()
     {
         if (isset($this->userID)) {
             $query = $this->dbconnection->prepare(
-                "SELECT b.auctionID, i.itemName, i.description, a.endDatetime as purchaseDate, i.sellerID, b.bidAmount
-                FROM items as i, auctions as a, bids as b
-                WHERE b.auctionID = a.auctionID
+                "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as purchaseDate
+                FROM items as i, auctions as a, purchaseHistory as p
+                WHERE p.auctionID = a.auctionID
                 AND a.itemID = i.itemID
                 AND a.endDatetime < now()
-                AND b.userID = ?"
-            );
-
-            $query->execute(array($this->userID));
-            $result = $query->fetchall();
-
-            $toReturn = array();
-            foreach ($result as $row) {
-                $res = ($this->fetch_max_bid_for_auction($row['auctionID']));
-                if ($res['highestBid'] == $row['bidAmount']) {
-                    array_push($toReturn, $row);
-                }
-            }
-            return $toReturn;
-        }
-    }
-
-
-
-    public function fetch_sales_history()
-    {
-        if (isset($this->userID)) {
-            $query = $this->dbconnection->prepare(
-                "SELECT distinct a.auctionID, i.itemName, i.description, a.endDatetime as saleDate
-                FROM items as i, auctions as a, bids as b
-                WHERE b.auctionID = a.auctionID
-                AND a.itemID = i.itemID
-                AND a.endDatetime < now()
-                AND i.sellerID = ?"
+                AND p.buyerID = ?"
             );
             $query->execute(array($this->userID));
             return $query->fetchall();
         }
     }
 
+    // OLD FUNCTION
     // public function fetch_purchase_history()
     // {
     //     if (isset($this->userID)) {
@@ -221,6 +177,22 @@ class DBHelper
     //         return $toReturn;
     //     }
     // }
+
+    public function fetch_sales_history()
+    {
+        if (isset($this->userID)) {
+            $query = $this->dbconnection->prepare(
+                "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as saleDate
+                FROM items as i, auctions as a, purchaseHistory as p
+                WHERE p.auctionID = a.auctionID
+                AND a.itemID = i.itemID
+                AND a.endDatetime < now()
+                AND i.sellerID = ?"
+            );
+            $query->execute(array($this->userID));
+            return $query->fetchall();
+        }
+    }
 
     public function fetch_your_listing()
     {
