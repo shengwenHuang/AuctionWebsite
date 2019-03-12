@@ -162,7 +162,15 @@ class DBHelper
                 AND a.itemID = i.itemID
                 AND a.endDatetime < now()
                 AND b.userID = ?"
+
             );
+
+            FROM bids, auctions
+            WHERE auctionID = ?
+            AND bids.auctionID = auction.auctionID
+            AND bids.bidAmount >= auctions.reservePrice
+            ORDER BY bidAmount DESC
+
 
             $query->execute(array($this->userID));
             $result = $query->fetchall();
@@ -490,8 +498,10 @@ class DBHelper
             "SELECT username, email, userID
             FROM users
             WHERE userID = (SELECT userID
-            FROM bids
+            FROM bids, auctions
             WHERE auctionID = ?
+            AND bids.auctionID = auction.auctionID
+            AND bids.bidAmount >= auctions.reservePrice
             ORDER BY bidAmount DESC
             LIMIT 1)"
         );
@@ -540,6 +550,11 @@ class DBHelper
         //Set the subject line
         if ($bool) {
             $mail->Subject = 'You\'ve won the auction!';
+            $newQuery = $this->dbconnection->prepare(
+                "INSERT into purchaseHistory buyerID, auctionID VALUES (?,?)"
+            );
+            $newQuery->execute(array($userID,$auctionID));
+
         }
         else {
             $mail->Subject = 'You have been outbid!';
@@ -603,6 +618,7 @@ class DBHelper
             AND auctions.itemID = items.itemID
             AND items.sellerID = users.userID
             AND auctions.auctionID = bids.auctionID
+            AND bids.bidAmount >= auctions.reservePrice
             LIMIT 1"
         );
         $query->execute(array($auctionID));
