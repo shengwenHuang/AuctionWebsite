@@ -50,7 +50,6 @@
                  <th>Item Description</th> 
                  <th>Purchase Datetime</th> 
                  <th>Purchase Price</th> 
-                 <th>Seller ID</th> 
              </tr>";
  
              // Populate the table with the row data
