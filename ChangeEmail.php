@@ -1,10 +1,10 @@
 <?php
-  define("accessChecker", TRUE);
+define("accessChecker", true);
 
-  require "redirectIfNotLoggedIn.php";
-  require "dbHelper.php";
-  $dbHelper = new DBHelper(null);
-  require "header.php";
+require "redirectIfNotLoggedIn.php";
+require "dbHelper.php";
+$dbHelper = new DBHelper(null);
+require "header.php";
 ?>
 <!doctype html>
 <html>
@@ -27,13 +27,14 @@
                 </div>
                 <label for="email">Enter your new email address</label>
                 <input type="email" name="newemail" style="display: block; margin-bottom: 10px" placeholder="New email address...">
-                <input id="change-email" type="submit"  name="change-email" style="display: block; font-size: 1.25em" value="Submit"/>
+                <input id="change-email" type="submit" name="change-email" style="display: block; font-size: 1.25em"
+                    value="Submit" />
             </form>
-            <?php if (isset($_GET['message'])) : ?>
+            <?php if (isset($_GET['message'])): ?>
             <div class="error">
                 <?php echo $_GET['message']; ?>
             </div>
-            <?php endif; ?>
+            <?php endif;?>
         </div>
     </div>
 </body>

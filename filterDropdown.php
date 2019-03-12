@@ -31,13 +31,13 @@
 </div>
 
 <script>
-    document.getElementById("orderBySelect").addEventListener("change", function(event) {
+    document.getElementById("orderBySelect").addEventListener("change", function (event) {
         var selected = event.target.value;
         var url = location.protocol + '//' + location.host + location.pathname;
 
         if (location.search.includes("orderBySelect")) {
             var searchParams = location.search.split("&");
-            for (i=0; i<searchParams.length; i++) {
+            for (i = 0; i < searchParams.length; i++) {
                 if (searchParams[i].includes("orderBySelect")) {
                     if (i == 0) {
                         searchParams[i] = ("?orderBySelect=" + selected);

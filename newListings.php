@@ -40,9 +40,9 @@
                   }
                   ?>
                 </select>
-                </div>
-              </div>  
+              </div>
             </div>
+          </div>
         </div>
 
         <input type="number" step=".01" id="start-price" name="start-price" placeholder="Start price" /><br />
@@ -90,10 +90,11 @@
     </div>
   </div>
   <script>
-    function loadGen (year, month, day) {
-      genDatePicker (year, month, day);
+    function loadGen(year, month, day) {
+      genDatePicker(year, month, day);
     }
-    function genDatePicker (year, month, day){
+
+    function genDatePicker(year, month, day) {
       var fallbackPicker = document.querySelector('.fallbackDatePicker');
       var fallbackLabel = document.querySelector('.fallbackLabel');
 
@@ -112,7 +113,7 @@
       function populateDays(month) {
         // delete the current set of <option> elements out of the
         // day <select>, ready for the next set to be injected
-        while(daySelect.firstChild){
+        while (daySelect.firstChild) {
           daySelect.removeChild(daySelect.firstChild);
         }
 
@@ -120,19 +121,20 @@
         var dayNum;
 
         // 31 or 30 days?
-        if(month === '01' || month === '03' || month === '05' || month === '07' || month === '08' || month === '10' || month === '12') {
+        if (month === '01' || month === '03' || month === '05' || month === '07' || month === '08' || month === '10' ||
+          month === '12') {
           dayNum = 31;
-        } else if(month === '04' || month === '06' || month === '09' || month === '11') {
+        } else if (month === '04' || month === '06' || month === '09' || month === '11') {
           dayNum = 30;
         } else {
-        // If month is February, calculate whether it is a leap year or not
+          // If month is February, calculate whether it is a leap year or not
           var year = yearSelect.value;
           var leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
           dayNum = leap ? 29 : 28;
         }
 
         // inject the right number of new <option> elements into the day <select>
-        for(i = 1; i <= dayNum; i++) {
+        for (i = 1; i <= dayNum; i++) {
           var option = document.createElement('option');
           j = ('0' + i).slice(-2);
           option.textContent = j;
@@ -142,22 +144,22 @@
         // if previous day has already been set, set daySelect's value
         // to that day, to avoid the day jumping back to 1 when you
         // change the year
-        if(previousDay) {
+        if (previousDay) {
           daySelect.value = previousDay;
 
           // If the previous day was set to a high number, say 31, and then
           // you chose a month with less total days in it (e.g. February),
           // this part of the code ensures that the highest day available
           // is selected, rather than showing a blank daySelect
-          if(daySelect.value === "") {
+          if (daySelect.value === "") {
             daySelect.value = previousDay - 1;
           }
 
-          if(daySelect.value === "") {
+          if (daySelect.value === "") {
             daySelect.value = previousDay - 2;
           }
 
-          if(daySelect.value === "") {
+          if (daySelect.value === "") {
             daySelect.value = previousDay - 3;
           }
         }
@@ -169,20 +171,20 @@
         var year = date.getFullYear();
 
         // Make this year, and the 100 years before it available in the year <select>
-        for(var i = 0; i <= 100; i++) {
+        for (var i = 0; i <= 100; i++) {
           var option = document.createElement('option');
-          option.textContent = year-i;
+          option.textContent = year - i;
           yearSelect.appendChild(option);
         }
       }
 
       // when the month or year <select> values are changed, rerun populateDays()
       // in case the change affected the number of available days
-      yearSelect.onchange = function() {
+      yearSelect.onchange = function () {
         populateDays(monthSelect.value);
       }
 
-      monthSelect.onchange = function() {
+      monthSelect.onchange = function () {
         populateDays(monthSelect.value);
       }
 
@@ -191,7 +193,7 @@
 
       // update what day has been set to previously
       // see end of populateDays() for usage
-      daySelect.onchange = function() {
+      daySelect.onchange = function () {
         previousDay = daySelect.value;
       }
     }

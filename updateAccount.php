@@ -17,7 +17,9 @@
   <div id="body-content">
     <header>
       <?php if (isset($_GET['message'])): ?>
-        <h1><?php echo $_GET['message']; ?></h1>
+      <h1>
+        <?php echo $_GET['message']; ?>
+      </h1>
       <?php endif;?>
     </header>
   </div>

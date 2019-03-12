@@ -6,13 +6,13 @@
     $dbHelper = new DBHelper(null);
     require "header.php";
 ?>
- 
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>Search results</title>
-    <link rel="stylesheet" href="css/table.css"/>
+    <link rel="stylesheet" href="css/table.css" />
 </head>
 
 <body>

@@ -19,7 +19,8 @@
       cursor: pointer;
     }
 
-    .dropbtn:hover, .dropbtn:focus {
+    .dropbtn:hover,
+    .dropbtn:focus {
       background-color: #3e8e41;
     }
 
@@ -32,7 +33,9 @@
       border-bottom: 1px solid #ddd;
     }
 
-    #myInput:focus {outline: 3px solid #ddd;}
+    #myInput:focus {
+      outline: 3px solid #ddd;
+    }
 
     .dropdown {
       padding-right: 10em;
@@ -55,34 +58,38 @@
       display: block;
     }
 
-    .dropdown a:hover {background-color: #ddd;}
+    .dropdown a:hover {
+      background-color: #ddd;
+    }
 
-    .show {display: block;}
+    .show {
+      display: block;
+    }
   </style>
 </head>
 
-  <div style="display: flex; align-items: center; justify-content: space-between; background-color: grey; margin-bottom: 15px">
-    <h1 style="color: white; margin-left: 15px">EbayLite</h1>
-    <div class="dropdown">
-      <button onclick="toggleMenu()" class="dropbtn">My EbayLite</button>
-      <div id="myDropdown" class="dropdown-content">
-        <a href="homepage.php" style="font-weight: bold">Home page</a>
-        <a href="myBids.php">My bids</a>
-        <a href="watchlist.php">My watchlist</a>
-        <a href="purchaseHistory.php">Purchase history</a>
-        <a href="yourListings.php">My listings</a>
-        <a href="salesHistory.php">Sales history</a>
-        <a href="updateAccount.php">Update account info</a>
-        <a href="index.php" style="font-weight: bold">Logout</a>
-      </div>
+<div style="display: flex; align-items: center; justify-content: space-between; background-color: grey; margin-bottom: 15px">
+  <h1 style="color: white; margin-left: 15px">EbayLite</h1>
+  <div class="dropdown">
+    <button onclick="toggleMenu()" class="dropbtn">My EbayLite</button>
+    <div id="myDropdown" class="dropdown-content">
+      <a href="homepage.php" style="font-weight: bold">Home page</a>
+      <a href="myBids.php">My bids</a>
+      <a href="watchlist.php">My watchlist</a>
+      <a href="purchaseHistory.php">Purchase history</a>
+      <a href="yourListings.php">My listings</a>
+      <a href="salesHistory.php">Sales history</a>
+      <a href="updateAccount.php">Update account info</a>
+      <a href="index.php" style="font-weight: bold">Logout</a>
     </div>
   </div>
+</div>
 
-  <script>
-    // When the user clicks on the button, toggle between hiding and showing the dropdown content
-    function toggleMenu() {
-      document.getElementById("myDropdown").classList.toggle("show");
-    }
-  </script>
+<script>
+  // When the user clicks on the button, toggle between hiding and showing the dropdown content
+  function toggleMenu() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+</script>
 
 </html>
