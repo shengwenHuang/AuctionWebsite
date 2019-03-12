@@ -143,7 +143,6 @@ class DBHelper
                 FROM items as i, auctions as a, purchaseHistory as p
                 WHERE p.auctionID = a.auctionID
                 AND a.itemID = i.itemID
-                AND a.endDatetime < now()
                 AND p.buyerID = ?"
             );
             $query->execute(array($this->userID));
@@ -185,9 +184,7 @@ class DBHelper
                 "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as saleDate
                 FROM items as i, auctions as a, purchaseHistory as p
                 WHERE p.auctionID = a.auctionID
-                AND a.itemID = i.itemID
-                AND a.endDatetime < now()
-                AND i.sellerID = ?"
+                AND a.itemID = i.itemID                AND i.sellerID = ?"
             );
             $query->execute(array($this->userID));
             return $query->fetchall();

@@ -60,7 +60,6 @@
                            <td>" . $row["description"] . "</td> 
                            <td>" . $row["purchaseDate"] . "</td>
                            <td>£" . number_format($row["highestBid"]/100, 2) . "</td>
-                           <td>" . $row["sellerID"] . "</td>
                        </tr>";
              }
  
