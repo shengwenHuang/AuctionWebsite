@@ -44,7 +44,7 @@
               </div>  
             </div>
         </div>
-        <!--------------->
+
         <input type="number" step=".01" id="start-price" name="start-price" placeholder="Start price" /><br />
         <input type="number" step=".01" id="reserve-price" name="reserve-price" placeholder="Reserve price" /><br />
         <!-- date picker -->

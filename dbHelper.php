@@ -66,15 +66,6 @@ class DBHelper
         return $query->execute(array($username, $password, $email));
     }
 
-    // public function fetch_auctions_by_user()
-    // {
-    //     if (isset($this->userID)) {
-    //         $query = $this->dbconnection->prepare("SELECT DISTINCT(auctionID) FROM bids WHERE userID = ?");
-    //         $query->execute(array($this->userID));
-    //         return $query->fetchall();
-    //     }
-    // }
-
     public function fetch_future_auctions_by_user()
     {
         if (isset($this->userID)) {
@@ -88,21 +79,9 @@ class DBHelper
         }
     }
 
-
     public function fetch_listing_by_user_auction($auctionID)
     {
-        if (isset($this->userID)) {
-            // Create a query to retrieve item, bid and auction details for the maximum bid made by the user in a given auction
-            // old query
-            // "SELECT i.itemName, i.description, MAX(b.bidAmount) AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
-                // FROM items AS i, auctions AS a, bids AS b
-                // WHERE b.userID = ?
-                // AND b.auctionID = ?
-                // AND i.itemID = a.itemID
-                // AND a.auctionID = b.auctionID
-                // GROUP BY itemName, description, yourBiddt, endDatetime"
-            
-            
+        if (isset($this->userID)) {        
             $query = $this->dbconnection->prepare(
                 
                 "SELECT i.itemName, i.description, b.bidAmount AS yourBid, b.bidDatetime AS yourBiddt, a.endDatetime
@@ -150,33 +129,6 @@ class DBHelper
         }
     }
 
-    // OLD FUNCTION
-    // public function fetch_purchase_history()
-    // {
-    //     if (isset($this->userID)) {
-    //         $query = $this->dbconnection->prepare(
-    //             "SELECT b.auctionID, i.itemName, i.description, a.endDatetime as purchaseDate, i.sellerID, b.bidAmount
-    //             FROM items as i, auctions as a, bids as b
-    //             WHERE b.auctionID = a.auctionID
-    //             AND a.itemID = i.itemID
-    //             AND a.endDatetime < now()
-    //             AND b.userID = ?"
-    //         );
-
-    //         $query->execute(array($this->userID));
-    //         $result = $query->fetchall();
-
-    //         $toReturn = array();
-    //         foreach ($result as $row) {
-    //             $res = ($this->fetch_max_bid_for_auction($row['auctionID']));
-    //             if ($res['highestBid'] == $row['bidAmount']) {
-    //                 array_push($toReturn, $row);
-    //             }
-    //         }
-    //         return $toReturn;
-    //     }
-    // }
-
     public function fetch_sales_history()
     {
         if (isset($this->userID)) {
@@ -218,42 +170,7 @@ class DBHelper
                 $rows[$i]["bidsNumber"] = $bidsNumberRow["bidsNumber"];
             }
             
-            // $bidsNumberRow = $query_get_bidsNumber->fetchall();
-            // for ($i = 0, $size = count($bidsNumberRow); $i < $size; ++$i) {
-            //     $row[$i]["bidsNumber"] = $bidsNumberRow[$i]["bidsNumber"];
-            // }
-            // foreach ($row as $r) {
-            //     if (!array_key_exists("bidsNumber", $r)) {
-            //         $r["bidsNumber"] = 0;
-            //     }
-            // }
-            
             return $rows;
-            // $query = $this->dbconnection->prepare(
-            //     "SELECT a.auctionID, i.itemName, i.description, COUNT(b.bidID) AS bidsNumber, a.endDatetime
-            //     FROM items as i, bids as b, auctions as a
-            //     WHERE i.itemID = a.itemID
-            //     AND a.auctionID = b.auctionID
-            //     AND a.endDatetime > now()
-            //     AND i.sellerID = ?
-            //     GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
-            // );
-            // $query->execute(array($this->userID));
-            // if ($query->rowCount() == 0) {
-            //     $query = $this->dbconnection->prepare(
-            //         "SELECT a.auctionID, i.itemName, i.description, a.endDatetime
-            //         FROM items as i, auctions as a
-            //         WHERE i.itemID = a.itemID
-            //         AND a.endDatetime > now()
-            //         AND i.sellerID = ?
-            //         GROUP BY a.auctionID, i.itemName, i.description, a.endDatetime"
-            //     );
-            //     $query->execute(array(($this->userID)));
-            //     $row = $query->fetchall();
-            //     $row["bidsNumber"] = 0;
-            //     return $row;
-            // }
-            // return $query->fetchall();
         }
     }
 
@@ -354,7 +271,8 @@ class DBHelper
         $query->execute(array($password, $username));
     }
     
-    public function fetch_itemid_from_items($itemName,$sellerID){
+    // THIS IS NOT USED
+    public function fetch_itemid_from_items($itemName, $sellerID){
         $query = $this->dbconnection->prepare(
             "SELECT itemID FROM items WHERE itemName = ? AND sellerID = ?");
         $query->execute(array($itemName,$sellerID));
@@ -368,30 +286,6 @@ class DBHelper
         $query->execute(array($item_category));
         $row = $query->fetch();
         return $row["categoryID"];
-    }
-    
-    public function fetch_all_items_from_categoris($categoryID){
-        $query = $this->dbconnection->prepare(
-            "SELECT itemID FROM ItemCategories WHERE categoryID = ?");
-        $query->execute(array($categoryID));
-        $row = $query->fetch();
-        return $row["itemID"];
-    }
-    
-    public function fetch_popular_auctionID($categoryID){
-        $query = $this->dbconnection->prepare(
-            "SELECT bids.auctionID, bids.bidAmount, items.itemName
-            FROM bids, auctions, items, itemCategories
-            WHERE bids.auctionID = auctions.auctionID
-            AND auctions.itemID = items.itemID
-            AND items.itemID = itemCategories.itemID
-            AND itemCategories.categoryID = ?");
-        $query->execute(array($categoryID));
-        $row = $query->fetch();
-        $array =  $row["itemName"];
-        $values = array_count_values($array);
-        arsort($values);
-        return array_slice(array_keys($values), 0, 5, true);
     }
     
     public function insert_item($itemName, $sellerID, $description)
@@ -418,10 +312,6 @@ class DBHelper
     }
 
     public function fetch_search_results ($searchQuery, $category){
-        // Changes characters used in html to their equivalents, for example: < to &gt
-        // $searchQuery = htmlspecialchars($searchQuery);
-        // $searchQuery = "%{$searchQuery}%";
-
         // If there was no category selected, just seach by query string
         if ($category == "Category") {
             $query = $this->dbconnection->prepare(
@@ -476,8 +366,6 @@ class DBHelper
         $userID = $row['userID'];
         $username = $row['username'];
         $email = $row['email'];
-        // use PHPMailer\PHPMailer\PHPMailer;
-        // require '../vendor/autoload.php';
         //Create a new PHPMailer instance
         $mail = new PHPMailer;
         //Tell PHPMailer to use SMTP
@@ -489,10 +377,8 @@ class DBHelper
         $mail->SMTPDebug = 2;
         //Set the hostname of the mail server
         $mail->Host = 'smtp.gmail.com';
-        // use
-        // $mail->Host = gethostbyname('smtp.gmail.com');
         // if your network does not support SMTP over IPv6
-        //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+        // Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
         $mail->Port = 587;
         //Set the encryption system to use - ssl (deprecated) or tls
         $mail->SMTPSecure = 'tls';
@@ -523,7 +409,6 @@ class DBHelper
         
         //Read an HTML message body from an external file, convert referenced images to embedded,
         //convert HTML into a basic plain-text alternative body
-        // $mail->msgHTML(file_get_contents('contents.html'), __DIR__);
         if ($bool) {
             $mail->msgHTML('<p>Hi ' . $username . '</p><p>You won auction ID: ' . $auctionID . '</p><p> Please go to http://localhost:8888/itemAuction.php?auctionID=' . $auctionID . ' to see your purchase</p>');
         }
@@ -532,8 +417,6 @@ class DBHelper
         }
         //Replace the plain text body with one created manually
         $mail->AltBody = 'This is a plain-text message body';
-        //Attach an image file
-        // $mail->addAttachment('images/phpmailer_mini.png');
         //send the message, check for errors
         
         if (!$mail->send()) {
