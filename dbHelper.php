@@ -463,8 +463,8 @@ class DBHelper
             FROM users
             WHERE userID = (SELECT userID
             FROM bids, auctions
-            WHERE auctionID = ?
-            AND bids.auctionID = auction.auctionID
+            WHERE auctions.auctionID = ?
+            AND bids.auctionID = auctions.auctionID
             AND bids.bidAmount >= auctions.reservePrice
             ORDER BY bidAmount DESC
             LIMIT 1)"
@@ -515,7 +515,7 @@ class DBHelper
         if ($bool) {
             $mail->Subject = 'You\'ve won the auction!';
             $newQuery = $this->dbconnection->prepare(
-                "INSERT into purchaseHistory buyerID, auctionID VALUES (?,?)"
+                "INSERT into purchaseHistory (buyerID, auctionID) VALUES (?,?)"
             );
             $newQuery->execute(array($userID,$auctionID));
 
