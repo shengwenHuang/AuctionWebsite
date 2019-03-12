@@ -184,8 +184,7 @@ class DBHelper
                 "SELECT p.auctionID, i.itemName, i.description, a.endDatetime as saleDate
                 FROM items as i, auctions as a, purchaseHistory as p
                 WHERE p.auctionID = a.auctionID
-                AND a.itemID = i.itemID
-                AND i.sellerID = ?"
+                AND a.itemID = i.itemID                AND i.sellerID = ?"
             );
             $query->execute(array($this->userID));
             return $query->fetchall();
