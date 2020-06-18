@@ -15,4 +15,4 @@ This is an online auction website with the capacities below.
 6. Buyers can receive recommendations for items to bid on based on collaborative filtering.
 
 
-The details of this project can be seen in Database.doc.
+The details of this project can be seen in Databases.doc.
