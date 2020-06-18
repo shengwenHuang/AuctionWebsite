@@ -12,4 +12,4 @@ This is an online auction website with the capacities below.
 
 5. Buyers can watch auctions on items and receive emailed updates on bids on those items including notifications when they are outbid.
 
-6. Buyers can receive recommendations for items to bid on based on collaborative filtering (i.e., ‘you might want to bid on the sorts of things other people, who have also bid on the sorts of things you have previously bid on, are currently bidding on).
+6. Buyers can receive recommendations for items to bid on based on collaborative filtering.
